@@ -35,12 +35,12 @@ def pic_of_day():
 def homepage():
     
     response = requests.get(f"{API_BASE_URL}/planetary/apod")
-    r = response.json()['title']
+    title = response.json()['title']
     date = request.args['date']
   
 
     
-    return render_template('index.html', date = date, title=title)
+    return render_template('index.html', date=date, title=title)
 
 
 
