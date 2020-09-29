@@ -3,7 +3,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, Mealplan
 from forms import MealplanRequestForm
 import requests
-from secrets import API_Key, Host_Key
+from secrets import API_Key
 
 
 app = Flask(__name__)
@@ -19,35 +19,35 @@ debug = DebugToolbarExtension(app)
 connect_db(app)
 db.create_all()
 
+API_BASE_URL = "https://api.nasa.gov"
 
-def get_mealplans_info():
-    """generate weekly meal plans for vegetarians"""
+def pic_of_day():
+    """get a picture of the day from NASA"""
 
-    url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/mealplans/generate"
+  
+    response = requests.get(f"{API_BASE_URL}/planetary/apod")
+    r = resopnse.json() 
+    return r['date']
 
-    querystring = {"timeFrame":"week","targetCalories":"2000","diet":"vegetarian","exclude":"shellfish%2C olives"}
-
-    headers = {
-    'x-rapidapi-host': Host_Key,
-    'x-rapidapi-key': API_Key
-    }
-
-    response = requests.request("GET", url, headers=headers, params=querystring)
-
-    return response.text
-
-# @app.route('/mealplans')
-# def get_mealplans():
-#     """get meal plans, validating input and returning info about meal plans"""
-
-#     return request.json
-   
     
-#     form = MealplanRequestForm
+
+@app.route('/')
+def homepage():
+    
+    response = requests.get(f"{API_BASE_URL}/planetary/apod")
+    r = response.json()['title']
+    date = request.args['date']
+  
+
+    
+    return render_template('index.html', date = date, title=title)
 
 
-#     if form.validate_on_submit():
-#         meals = received['properties'][0]['meals'][1]['items'][1]['properties']
+
+
+
+
+
 
    
 

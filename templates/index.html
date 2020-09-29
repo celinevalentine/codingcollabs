@@ -9,9 +9,16 @@
     <script src="https://unpkg.com/jquery"></script>
 </head>
 <body>
+<form action="/">
+    <label for="date">Date</label>
+    <input type="text" id="date" name="date" value="" placeholder="YYYY-MM-DD" autofocus>
+   <button>Search</button>
+</form>
 
-
-
+<div>
+    {{date}}
+    <h3>{{title}}</h3>
+</div>
 
 <script src="https://unpkg.com/axios/dist/axios.js"></script>   
 <script src="/statics/app.js"></script>
