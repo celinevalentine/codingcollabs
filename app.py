@@ -21,26 +21,28 @@ db.create_all()
 
 API_BASE_URL = "https://api.nasa.gov"
 
-def pic_of_day():
+def pic_of_day(date):
     """get a picture of the day from NASA"""
 
-  
-    response = requests.get(f"{API_BASE_URL}/planetary/apod")
-    r = resopnse.json() 
-    return r['date']
+   
+    response = requests.get(f"{API_BASE_URL}/planetary/apod?api_key={API_Key}&date={date}")
+    data = response.json()
+    title = data['title']
+    expl = data['explanation']
+    url = data['url']
+    info = {"date":date,"title":title, "expl":expl, "url":url }
+
+    return info
 
     
 
 @app.route('/')
 def homepage():
     
-    response = requests.get(f"{API_BASE_URL}/planetary/apod")
-    title = response.json()['title']
     date = request.args['date']
-  
-
-    
-    return render_template('index.html', date=date, title=title)
+    info = pic_of_day(date)
+   
+    return render_template('index.html', info=info)
 
 
 
