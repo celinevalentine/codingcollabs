@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ user.full_name }}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+  <div class="col-sm-10 col-12">
+
+    <h2 class="mt-4">Post</h2>
+
+    <ul>
+      {% for post in user.posts %}
+
+      <li>
+        <small>{{ post.image_url }}</small>
+        <div class="col-3">
+            <img class="img-thumbnail" src="{{ post.image_url}}">
+            <a href="{{ url_for('edit_post', post_id=post.id) }}">{{ post.topic }}</a>
+      </li>
+
+      <form>
+        {{form.hidden_tag()}}
+        <button class="btn btn-primary"
+                formmethod="GET"
+                formaction="url_for('edit_post', post_id=post.id)">
+          Edit
+        </button>
+        <button class="btn btn-danger"
+                formmethod="POST"
+                formaction="url_for('delete_post', post_id=post.id)">
+          Delete
+        </button>
+      </form>
+
+      {% endfor %}
+    </ul>
+
+    <p>
+      <a href="/users/{{ user.username }}/posts/new" class="btn btn-success">
+        Add a Post
+      </a>
+    </p>
+
+    <form>
+      <button class="btn btn-danger btn-sm"
+              formaction="/users/{{ user.username }}/delete"
+              formmethod="POST">
+        Delete User
+      </button>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

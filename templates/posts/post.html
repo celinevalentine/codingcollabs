@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ user.full_name }}'s Post{% endblock %}
+
+{% block content %}
+  
+<form>
+  {% include "_form.html" %}
+
+          <button class="btn btn-success"
+          formmethod="POST"
+          formaction="/posts">Submit</button>
+          <a href="/users/{{ user.id }}" class="btn btn-info">Cancel</a>
+
+</form>
+{% endblock %}
+        
