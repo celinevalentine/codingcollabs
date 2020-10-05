@@ -23,7 +23,7 @@ connect_db(app)
 db.create_all()
 
 API_BASE_URL = "https://api.nasa.gov"
-# https://images-api.nasa.gov
+NASA_Image_API = "https://images-api.nasa.gov"
 
 def pic_of_day(date):
     """get a picture of the day from NASA"""
@@ -41,7 +41,7 @@ def pic_of_day(date):
 def nasa_img_search(keyword):
     """get a picture from the NASA image library"""
 
-    response = requests.get(f"https://images-api.nasa.gov/search?q={keyword}&media_type=image")
+    response = requests.get(f"{NASA_Image_API}/search?q={keyword}&media_type=image")
     res = response.json()
     title = res.collection.items.data['title']
     description = res.collection.items.data['description']
