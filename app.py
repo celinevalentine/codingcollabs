@@ -38,6 +38,18 @@ def pic_of_day(date):
 
     return info
 
+def nasa_img_search(keyword):
+    """get a picture from the NASA image library"""
+
+    response = requests.get(f"https://images-api.nasa.gov/search?q={keyword}&media_type=image")
+    res = response.json()
+    title = res.collection.items.data['title']
+    description = res.collection.items.data['description']
+    link = res.collection.items.links['href']
+    info = {"title":title, "description":description, "link":link }
+
+    return info
+
     
 @app.before_request
 def add_user_to_g():
