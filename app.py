@@ -43,9 +43,9 @@ def nasa_img_search(keyword):
 
     response = requests.get(f"{NASA_Image_API}/search?q={keyword}&media_type=image")
     res = response.json()
-    title = res.collection.items.data['title']
-    description = res.collection.items.data['description']
-    link = res.collection.items.links['href']
+    title = res['collection']['items'][0]['data'][0]['title']
+    description = res['collection']['items'][0]['data'][0]['description']
+    link = res['collection']['items'][0]['links'][0]['href']
     info = {"title":title, "description":description, "link":link }
 
     return info
@@ -62,7 +62,7 @@ def add_user_to_g():
         g.user = None
 
 def do_login(user):
-    session[CURR_USER_KEY] = user.id
+    session[CURR_USER_KEY] = user.username
 
 def do_logout(user):
     if CURR_USER_KEY in session:
@@ -87,7 +87,7 @@ def register():
 
         except IntegrityError as e:
             flash("Username already taken", 'danger')
-            return render_template('users/signup.html', form=form)
+            return render_template('users/register.html', form=form)
 
         do_login(user)
 
@@ -121,18 +121,22 @@ def logout():
 def homepage():
     """show homepage about project information"""
 
-    return render_template('users/index.html')
+    user = User.query.all()
 
-@app.route('/users/<username>')
-def user_detail(username):
+    return render_template('users/index.html', user=user)
+
+@app.route('/users/<username>', methods=['POST'])
+def show_search_result(search):
 
     if "username" not in session or username != session['username']:
         raise Unauthorized()
 
     user = User.query.get(username)
-    form = DeleteForm()
 
-    return render_template("users/show.html", user=user, form=form)
+    keyword = request.form['search']
+    info = nasa_img_search(keyword)
+
+    return render_template("users/show.html", user=user,info=info)
 
 @app.route("/users/<username>/delete", methods=["POST"])
 def remove_user(username):
@@ -149,8 +153,8 @@ def remove_user(username):
     return redirect("/login")
 
 
-@app.route("/users/<username>/post/new", methods=["GET", "POST"])
-def new_post(username):
+@app.route("/users/<username>/posts/new", methods=["GET", "POST"])
+def add_post(username):
     """Show add-feedback form and process it."""
 
     if "username" not in session or username != session['username']:

@@ -39,7 +39,7 @@ class PostForm(FlaskForm):
     )
     summary = TextAreaField(
         "Summarize your research in 150- 250 words.",
-        validators=[InputRequired(), Length(max=150)]
+        validators=[InputRequired(), Length(100,150)]
     )
     image_url = StringField(
         "Upload one best image url (see instructions)",
