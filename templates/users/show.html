@@ -4,18 +4,21 @@
 
 {% block content %}
 
-    <h2 class="mt-4">Research</h2>
-    <nav class="navbar navbar-light bg-light">
-      <form class="form-inline">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-      </form>
-    </nav>
- <div class="container">
-   <p>{{info.title}}</p>
-
- </div>
+    
+      
   
+ <div>
+  <h2 class="mt-4">Research</h2>
+  <nav class="navbar navbar-light bg-light">
+  <form class="form-inline" action="/">
+      <input class="form-control mr-sm-2" type="search" placeholder="search" aria-label="Search" name="search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  
+<p>{{info.description}}</p>
+<img src="{{info.link}}" alt="">
+ 
+</div>
     
 
 {% endblock %}

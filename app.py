@@ -22,30 +22,36 @@ debug = DebugToolbarExtension(app)
 connect_db(app)
 db.create_all()
 
-API_BASE_URL = "https://api.nasa.gov"
+# API_BASE_URL = "https://api.nasa.gov"
 NASA_Image_API = "https://images-api.nasa.gov"
 
-def pic_of_day(date):
-    """get a picture of the day from NASA"""
+# def pic_of_day(date):
+#     """get a picture of the day from NASA"""
 
    
-    response = requests.get(f"{API_BASE_URL}/planetary/apod?api_key={API_Key}&date={date}")
-    data = response.json()
-    title = data['title']
-    expl = data['explanation']
-    url = data['url']
-    info = {"date":date,"title":title, "expl":expl, "url":url }
+#     response = requests.get(f"{API_BASE_URL}/planetary/apod?api_key={API_Key}&date={date}")
+#     data = response.json()
+#     title = data['title']
+#     expl = data['explanation']
+#     url = data['url']
+#     info = {"date":date,"title":title, "expl":expl, "url":url }
 
-    return info
+#     return info
 
-def nasa_img_search(keyword):
+def nasa_img_search(term):
     """get a picture from the NASA image library"""
+    user = g.user
 
-    response = requests.get(f"{NASA_Image_API}/search?q={keyword}&media_type=image")
-    res = response.json()
-    title = res['collection']['items'][0]['data'][0]['title']
-    description = res['collection']['items'][0]['data'][0]['description']
-    link = res['collection']['items'][0]['links'][0]['href']
+    term = request.args['search']
+    
+    response = requests.get(f"{NASA_Image_API}/search?q={term}&media_type=image")
+
+    r = response.json()
+    items = r['collection']['items']
+    for item in items:
+        title = item['data'][0]['title']
+        description = item['data'][0]['description']
+        link = item['links'][0]['href']
     info = {"title":title, "description":description, "link":link }
 
     return info
@@ -121,20 +127,28 @@ def logout():
 def homepage():
     """show homepage about project information"""
 
-    user = User.query.all()
+    term = request.args['search']
+    user = g.user
 
-    return render_template('users/index.html', user=user)
+    response = requests.get(f"{NASA_Image_API}/search?q={term}&media_type=image")
 
-@app.route('/users/<username>', methods=['POST'])
-def show_search_result(search):
+    r = response.json()
+    items = r['collection']['items']
+    for item in items:
+        title = item['data'][0]['title']
+        description = item['data'][0]['description']
+        link = item['links'][0]['href']
 
-    if "username" not in session or username != session['username']:
-        raise Unauthorized()
+    return render_template('users/index.html', user=user, title=title, description=description, link=link)
+
+@app.route('/users/<username>')
+def show_search_result(username):
 
     user = User.query.get(username)
-
-    keyword = request.form['search']
-    info = nasa_img_search(keyword)
+    
+    term = request.args['search']
+ 
+    info = nasa_img_search(term)
 
     return render_template("users/show.html", user=user,info=info)
 
