@@ -127,10 +127,10 @@ def logout():
 def homepage():
     """show homepage about project information"""
 
-    term = request.args['search']
+    # term = request.args['search']
     user = g.user
 
-    response = requests.get(f"{NASA_Image_API}/search?q={term}&media_type=image")
+    response = requests.get(f"{NASA_Image_API}/search?q=mars&media_type=image")
 
     r = response.json()
     items = r['collection']['items']
