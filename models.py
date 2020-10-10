@@ -18,7 +18,7 @@ class User(db.Model):
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
 
-    posts = db.relationship("Post", backref="user", cascade="all, delete")
+    projects = db.relationship("Project", backref="user", cascade="all, delete-orphan")
 
     @property
     def full_name(self):
@@ -54,16 +54,19 @@ class User(db.Model):
         else:
             return False
 
-class Post(db.Model):
-    """Post"""
+class Project(db.Model):
+    """Project"""
     
-    __tablename__ = "posts"
+    __tablename__ = "projects"
 
     id = db.Column(db.Integer, primary_key=True)
-    topic = db.Column(db.String, nullable=False)
-    summary = db.Column(db.String, nullable=False)
-    image_url = db.Column(
+    name = db.Column(db.String, nullable=False)
+    technology = db.Column(db.String, nullable=False)
+    about = db.Column(
         db.String, nullable=False)
+    level = db.Column(db.String, nullable=False)
+    link = db.Column(db.String, nullable=False)
+
     username = db.Column(db.String,db.ForeignKey('users.username'), nullable=False)
 
     @property
@@ -73,42 +76,42 @@ class Post(db.Model):
         return self.created_at.strftime("%a %b %-d  %Y, %-I:%M %p")
 
 
-class PostTag(db.Model):
-    """Tag on a post."""
+# class ProjectTag(db.Model):
+#     """Tag on a comments."""
 
-    __tablename__ = "posts_tags"
+#     __tablename__ = "projects_tags"
 
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), primary_key=True)
-    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id'), primary_key=True)
+#     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
+#     tag_id = db.Column(db.Integer, db.ForeignKey('tags.id'), primary_key=True)
 
 
-class Tag(db.Model):
-    """Tag that can be added to posts."""
+# class Tag(db.Model):
+#     """Tag that can be added to comments."""
 
-    __tablename__ = 'tags'
+#     __tablename__ = 'tags'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text, nullable=False, unique=True)
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.Text, nullable=False, unique=True)
 
-    posts = db.relationship(
-      'Post',
-      secondary="posts_tags",
-      cascade="all,delete",
-      backref="tags",
-    )
+#     projects = db.relationship(
+#       'Project',
+#       secondary="projects_tags",
+#       cascade="all,delete",
+#       backref="tags",
+#     )
 
-class Comment(db.Model):
-    """Comment."""
+# class Comment(db.Model):
+#     """Comment."""
 
-    __tablename__ = "comments"
+#     __tablename__ = "comments"
 
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=False)
-    username = db.Column(
-        db.String(10),
-        db.ForeignKey('users.username'),
-        nullable=False,
-    )
+#     id = db.Column(db.Integer, primary_key=True)
+#     content = db.Column(db.Text, nullable=False)
+#     username = db.Column(
+#         db.String(10),
+#         db.ForeignKey('comments.id'),
+#         nullable=False,
+#     )
 
 
 def connect_db(app):

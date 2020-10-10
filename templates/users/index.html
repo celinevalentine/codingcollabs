@@ -1,29 +1,41 @@
 {% extends 'base.html' %}
 
-{% block body %}homepage{% endblock %}
+{% block title %}{{user.full_name}}{% endblock %}
 
 {% block content %}
-<h1>Welcome to NASA Project</h1>
-<h2>Instructions:</h2>
+
+<nav class="navbar navbar-expand-lg navbar- bg-light">
+    {% if g.user %}
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="/users/{{username}}">Profile</a></li>
+      {% endif %}
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/projects">Projects</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/user/{{username}}/posts">Posts</a>
+           
+        <li class="nav-item">
+            <a class="nav-link" href="/user/{{username}}/resources">Resources</a>
+         
+    </nav>
+<h1>Welcome to My Coding Buddies</h1>
 <ul>
-    <li>Objective: Conduct a research to learn more about the solar system from NASA resources.[total points: 50; Due: 12/12/2020</li>
-    <li>Step 1: Click <a href="https://solarsystem.nasa.gov/solar-system/our-solar-system/overview/">Here</a> to choose a planet that you find interesting.</li>
-    <li>Step 2: Make a post of your research <a href="/posts/new">here </a>(at least 150 words).</li>
-    <li>Step 3: Add a image from the search bar on top right to the post to illustrate your research topic.</li>
-    <li>Step 4: Submit your post.</li>
-    <li>Step 4: Reply to 2 posts from your classmates (at least 50 words)</li>
+    <li>Why is this site created?</li>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi in placeat rem, maiores incidunt ad delectus facilis iusto dicta et provident, fugit laborum. Aut eligendi nihil nulla exercitationem obcaecati optio.</p>
+    <li>Who benefit from this site?</li>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis voluptatem atque excepturi, eos adipisci eum omnis voluptatibus, sapiente aspernatur cumque nisi consectetur ea animi! Porro accusamus nulla omnis optio sapiente!</p>
+    <li>How to use this site?</li>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus accusamus officiis ea rem minus! Unde consequuntur quidem incidunt animi, praesentium assumenda quos vero officiis in expedita mollitia! Inventore, numquam cumque.</p>
+    
 </ul>
 
-<div>
-    <h2 class="mt-4">Research</h2>
-    <nav class="navbar navbar-light bg-light">
-    <form class="form-inline" action="/">
-        <input class="form-control mr-sm-2" type="search" placeholder="search" aria-label="Search" name="search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-      </form>
-    
-  <p>{{description}}</p>
-  <img src="{{link}}" alt="">
-   
-  </div>
 {% endblock %}

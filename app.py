@@ -1,7 +1,7 @@
 from flask import Flask, request, redirect, render_template, flash, session, g, abort, url_for
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User, Post
-from forms import RegisterForm, LoginForm, PostForm
+from models import db, connect_db, User, Project
+from forms import RegisterForm, LoginForm, AddProjectForm
 from werkzeug.exceptions import Unauthorized
 from sqlalchemy.exc import IntegrityError
 import requests
@@ -21,41 +21,6 @@ debug = DebugToolbarExtension(app)
  
 connect_db(app)
 db.create_all()
-
-# API_BASE_URL = "https://api.nasa.gov"
-NASA_Image_API = "https://images-api.nasa.gov"
-
-# def pic_of_day(date):
-#     """get a picture of the day from NASA"""
-
-   
-#     response = requests.get(f"{API_BASE_URL}/planetary/apod?api_key={API_Key}&date={date}")
-#     data = response.json()
-#     title = data['title']
-#     expl = data['explanation']
-#     url = data['url']
-#     info = {"date":date,"title":title, "expl":expl, "url":url }
-
-#     return info
-
-def nasa_img_search(term):
-    """get a picture from the NASA image library"""
-    user = g.user
-
-    term = request.args['search']
-    
-    response = requests.get(f"{NASA_Image_API}/search?q={term}&media_type=image")
-
-    r = response.json()
-    items = r['collection']['items']
-    for item in items:
-        title = item['data'][0]['title']
-        description = item['data'][0]['description']
-        link = item['links'][0]['href']
-    info = {"title":title, "description":description, "link":link }
-
-    return info
-
     
 @app.before_request
 def add_user_to_g():
@@ -112,45 +77,60 @@ def login():
             do_login(user)
             flash(f"Hello, {user.username}!", "success")
             return redirect('/')
+        flash("Invalid credentials.", 'danger')
+
     return render_template('users/login.html',form=form)
 
 @app.route('/logout')
 def logout():
     """Handle logout of user."""
-
-    do_logout()
+    user = g.user
+    do_logout(user)
 
     flash("You have successfully logged out.", 'success')
     return redirect("/login")
 
 @app.route('/')
-def homepage():
-    """show homepage about project information"""
+def landing_page():
+    """show landing page for register or sign in"""
+    return render_template('users/index.html')
 
-    # term = request.args['search']
-    user = g.user
+@app.route("/users/<username>")
+def show_user(username):
+    """show profile of an user."""
 
-    response = requests.get(f"{NASA_Image_API}/search?q=mars&media_type=image")
-
-    r = response.json()
-    items = r['collection']['items']
-    for item in items:
-        title = item['data'][0]['title']
-        description = item['data'][0]['description']
-        link = item['links'][0]['href']
-
-    return render_template('users/index.html', user=user, title=title, description=description, link=link)
-
-@app.route('/users/<username>')
-def show_search_result(username):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
 
     user = User.query.get(username)
-    
-    term = request.args['search']
- 
-    info = nasa_img_search(term)
+    form = DeleteForm()
 
-    return render_template("users/show.html", user=user,info=info)
+    return render_template("users/detail.html", user=user, form=form)
+
+ @app.route("/users/<username>/edit", methods=["GET", "POST"])
+def edit_user(username):
+    """Show update user form and process it."""
+
+    user = User.query.get(username)
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    form = UserForm(obj=post)
+
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.first_name = form.first_name.data
+        user.last_name = form.last_name.data
+        user.email = form.email.data
+
+        db.session.commit()
+
+        return redirect("url_for('edit_user', username=username)")
+
+    return render_template("users/edit.html", form=form, post=post)
 
 @app.route("/users/<username>/delete", methods=["POST"])
 def remove_user(username):
@@ -167,71 +147,77 @@ def remove_user(username):
     return redirect("/login")
 
 
-@app.route("/users/<username>/posts/new", methods=["GET", "POST"])
-def add_post(username):
-    """Show add-feedback form and process it."""
+@app.route(f"/projects/{project.id}/new", methods=["GET", "POST"])
+def new_project(username):
+    """Add the project form and process it."""
 
     if "username" not in session or username != session['username']:
         raise Unauthorized()
 
-    form = PostForm()
+    form = AddProjectForm()
 
     if form.validate_on_submit():
-        topic = form.topic.data
-        summary = form.summary.data
-        image_url = form.image_url.data
+        name = form.name.data
+        technology = form.technology.data
+        about = form.about.data
+        level = form.level.data
+        link = form.link.data
 
-        post = Post(
-            topic=topic,
-            summary=summary,
-            image_url=image_url
+        project = Project(
+            name=name,
+            technology=technology,
+            about=about,
+            level=level,
+            link=link,
+            username=username
         )
 
-        db.session.add(post)
+        db.session.add(project)
         db.session.commit()
 
-        return redirect(f"/users/{post.username}")
+
+        return redirect (f"/user/{project.username}")
 
     else:
-        return render_template("posts/new.html", form=form)
+        return render_template("projects/new.html", form=form)
 
 
-@app.route("/posts/<int:post_id>/update", methods=["GET", "POST"])
-def edit_post(post_id):
-    """Show update-post form and process it."""
+# @app.route("/posts/<int:post_id>/update", methods=["GET", "POST"])
+# def edit_post(post_id):
+#     """Show update-post form and process it."""
 
-    post = Post.query.get(post_id)
+#     post = Post.query.get(post_id)
 
-    if "username" not in session or post.username != session['username']:
-        raise Unauthorized()
+#     if "username" not in session or post.username != session['username']:
+#         raise Unauthorized()
 
-    form = PostForm(obj=post)
+#     form = PostForm(obj=post)
 
-    if form.validate_on_submit():
-        post.topic = form.topic.data
-        post.summary = form.summary.data
-        post.image_url = form.image_url.data
+#     if form.validate_on_submit():
+#         post.topic = form.topic.data
+#         post.summary = form.summary.data
+#         post.image_url = form.image_url.data
 
-        db.session.commit()
+#         db.session.commit()
 
-        return redirect("url_for('edit_post', post_id=post.id)")
+#         return redirect("url_for('edit_post', post_id=post.id)")
 
-    return render_template("posts/edit.html", form=form, post=post)
-
-
-@app.route("/posts/<int:post_id>/delete", methods=["POST"])
-def delete_post(post_id):
-    """Delete a post."""
-    post = Post.query.get(post_id)
-
-    if "username" not in session or post.username != session['username']:
-        raise Unauthorized()
+#     return render_template("posts/edit.html", form=form, post=post)
 
 
-    form = DeleteForm()
+# @app.route("/posts/<int:post_id>/delete", methods=["POST"])
+# def delete_post(post_id):
+#     """Delete a post."""
+#     post = Post.query.get(post_id)
 
-    if form.validate_on_submit():
-        db.session.delete(post)
-        db.session.commit()
+#     if "username" not in session or post.username != session['username']:
+#         raise Unauthorized()
 
-    return redirect(f"/users/{post.username}")
+
+#     form = DeleteForm()
+
+#     if form.validate_on_submit():
+#         db.session.delete(post)
+#         db.session.commit()
+
+#     return redirect(f"/users/{post.username}")

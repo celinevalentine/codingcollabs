@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}{{user.full_name}}{% endblock %}
+
+{% block content %}
+<h3>Your Profile</h3>
+<p>Username: {{user.username}}</p>
+
+<p>First Name: {{user.first_name}}</p>
+<p>Last Name: {{user.last_name}}</p>
+<p>Email: {{user.email}}</p>
+
+<form>
+    <button formaction="/user/{{username}}/edit">Edit</button>
+    <button formmethod="POST" formaction="/user/{{username}}/Delete">Delete</button>
+</form>
+
+{% endblock %}

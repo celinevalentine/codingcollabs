@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, PasswordField, TextAreaField
+from wtforms import StringField, IntegerField, PasswordField, TextAreaField, SelectField
 from wtforms.validators import InputRequired, Email, Length, URL, NumberRange
 
 class RegisterForm(FlaskForm):
@@ -31,23 +31,29 @@ class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired()])
     password = PasswordField("Password", validators=[InputRequired()])
 
-class PostForm(FlaskForm):
-    """Add post form."""
-    topic = StringField(
-        "What is your research topic?",
-        validators=[InputRequired(), Length(max=30)],
+class AddProjectForm(FlaskForm):
+    """Add project form."""
+    name = StringField(
+        "Name",
+        validators=[InputRequired()],
     )
-    summary = TextAreaField(
-        "Summarize your research in 150- 250 words.",
-        validators=[InputRequired(), Length(100,150)]
+    technology = StringField(
+        "Technology",
+        validators=[InputRequired()],
     )
-    image_url = StringField(
-        "Upload one best image url (see instructions)",
+    about = TextAreaField(
+        "About",
+        validators=[InputRequired()]
+    )
+    level = SelectField("Level", choices=[('easy','easy'),('intermediate', 'intermediate'),('hard','hard')])
+    
+    link = StringField(
+        "Source Code",
         validators=[InputRequired(), URL()]
     )
 
-class DeleteForm(FlaskForm):
-    """Delete form -- this form is intentionally blank."""
+# class DeleteForm(FlaskForm):
+#     """Delete form -- this form is intentionally blank."""
 
 
 
