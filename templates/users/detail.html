@@ -11,8 +11,8 @@
 <p>Email: {{user.email}}</p>
 
 <form>
-    <button formaction="/user/{{username}}/edit">Edit</button>
-    <button formmethod="POST" formaction="/user/{{username}}/Delete">Delete</button>
+    <button formaction="/user/{{g.user.username}}/edit">Edit</button>
+    <button formmethod="POST" formaction="/user/{{g.user.username}}/delete">Delete</button>
 </form>
 
 {% endblock %}

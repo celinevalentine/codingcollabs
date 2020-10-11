@@ -104,55 +104,68 @@ def show_user(username):
         return redirect("/")
 
     user = User.query.get(username)
-    form = DeleteForm()
 
-    return render_template("users/detail.html", user=user, form=form)
+    return render_template("users/detail.html", user=user)
 
- @app.route("/users/<username>/edit", methods=["GET", "POST"])
+@app.route("/users/<username>/edit", methods=["GET", "POST"])
 def edit_user(username):
     """Show update user form and process it."""
 
-    user = User.query.get(username)
+    user = User.query.get_or_404(username)
 
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    form = UserForm(obj=post)
+    form = UserEditForm(obj=user)
 
     if form.validate_on_submit():
         user.username = form.username.data
-        user.first_name = form.first_name.data
-        user.last_name = form.last_name.data
+        user.header_image_url = form.header_image_url.data
+        user.bio = form.bio.data
         user.email = form.email.data
+        user.password = form.password.data
 
         db.session.commit()
 
-        return redirect("url_for('edit_user', username=username)")
+        return redirect(f"/users/{username}")
 
-    return render_template("users/edit.html", form=form, post=post)
+    return render_template("users/edit.html", form=form, user=user)
 
 @app.route("/users/<username>/delete", methods=["POST"])
 def remove_user(username):
     """Remove user and redirect to login."""
 
-    if "username" not in session or username != session['username']:
-        raise Unauthorized()
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
 
-    user = User.query.get(username)
+    user = User.query.get_or_404(username)
     db.session.delete(user)
     db.session.commit()
     session.pop("username")
 
     return redirect("/login")
 
+@app.route('/projects')
+def show_projects():
+    """show projects"""
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
 
-@app.route(f"/projects/{project.id}/new", methods=["GET", "POST"])
-def new_project(username):
+    projects = Project.query.all()
+
+    return render_template("/projects/show.html", projects=projects)
+
+
+@app.route(f"/projects/new", methods=["GET", "POST"])
+def new_project():
     """Add the project form and process it."""
 
-    if "username" not in session or username != session['username']:
-        raise Unauthorized()
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
 
     form = AddProjectForm()
 
@@ -176,7 +189,7 @@ def new_project(username):
         db.session.commit()
 
 
-        return redirect (f"/user/{project.username}")
+        return redirect ("/projects")
 
     else:
         return render_template("projects/new.html", form=form)

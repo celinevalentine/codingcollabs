@@ -1,33 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}{{user.full_name}}{% endblock %}
+{% block title %}home{% endblock %}
 
 {% block content %}
 
 <nav class="navbar navbar-expand-lg navbar- bg-light">
     {% if g.user %}
     <ul class="nav navbar-nav navbar-right">
-      <li><a href="/users/{{username}}">Profile</a></li>
+      <li><a href="/users/{{g.user.username}}">{{g.user.username}}</a></li>
       {% endif %}
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/projects">Projects</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/user/{{username}}/posts">Posts</a>
-           
-        <li class="nav-item">
-            <a class="nav-link" href="/user/{{username}}/resources">Resources</a>
-         
-    </nav>
-<h1>Welcome to My Coding Buddies</h1>
+    </ul>
+</nav>
+
+  
+ 
+<h1>Welcome to Coding Collabs</h1>
 <ul>
     <li>Why is this site created?</li>
     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi in placeat rem, maiores incidunt ad delectus facilis iusto dicta et provident, fugit laborum. Aut eligendi nihil nulla exercitationem obcaecati optio.</p>
@@ -36,6 +23,6 @@
     <li>How to use this site?</li>
     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus accusamus officiis ea rem minus! Unde consequuntur quidem incidunt animi, praesentium assumenda quos vero officiis in expedita mollitia! Inventore, numquam cumque.</p>
     
-</ul>
+</ul> 
 
 {% endblock %}

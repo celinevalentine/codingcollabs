@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, PasswordField, TextAreaField, SelectField
-from wtforms.validators import InputRequired, Email, Length, URL, NumberRange
+from wtforms.validators import InputRequired, Email, Length, URL, NumberRange, Optional, DataRequired
 
 class RegisterForm(FlaskForm):
     """User registration form."""
@@ -31,6 +31,14 @@ class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired()])
     password = PasswordField("Password", validators=[InputRequired()])
 
+class UserEditForm(FlaskForm):
+    """Form for editing a user."""
+
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('E-mail', validators=[DataRequired(), Email()])
+    header_image_url = StringField('(Optional) Header Image URL')
+    bio = TextAreaField('(Optional) Tell us about yourself')
+    password = PasswordField('Password', validators=[Length(min=6)])
 class AddProjectForm(FlaskForm):
     """Add project form."""
     name = StringField(
@@ -52,8 +60,8 @@ class AddProjectForm(FlaskForm):
         validators=[InputRequired(), URL()]
     )
 
-# class DeleteForm(FlaskForm):
-#     """Delete form -- this form is intentionally blank."""
+class DeleteForm(FlaskForm):
+    """Delete form -- this form is intentionally blank."""
 
 
 
