@@ -14,7 +14,7 @@ db.session.add(p1)
 db.session.commit()
 
 up1 = UserProject(project_id=1, username=johnv)
-db.session.add(p1)
+db.session.add(up1)
 db.session.commit()
 
 
