@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect, render_template, flash, session, g, abort, url_for
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User, Project
+from models import db, connect_db, User, Project, UserProject
 from forms import RegisterForm, LoginForm, AddProjectForm
 from werkzeug.exceptions import Unauthorized
 from sqlalchemy.exc import IntegrityError
@@ -10,7 +10,7 @@ from secrets import API_Key
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///mealplans'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///codercollab'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = "SECRET!"
