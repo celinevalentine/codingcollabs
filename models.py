@@ -18,6 +18,8 @@ class User(db.Model):
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
 
+    projects = db.relationship('Project', secondary = "users_projects")
+
     @property
     def full_name(self):
         """Return full name of user."""
@@ -52,15 +54,6 @@ class User(db.Model):
         else:
             return False
 
-class UserProject(db.Model):
-    """user_projects"""
-
-    __tablename__ = "users_projects"
-
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), primary_key=True)
-    username = db.Column(db.String, db.ForeignKey('users.username'), primary_key=True)
-
-
 class Project(db.Model):
     """Project"""
     
@@ -74,7 +67,7 @@ class Project(db.Model):
     level = db.Column(db.String, nullable=False)
     link = db.Column(db.String, nullable=False)
 
-    users = db.relationship('User', secondary = "users_projects", cascade="all, delete", backref="projects")
+    users = db.relationship('User', secondary = "users_projects")
 
 
     @property
@@ -82,6 +75,19 @@ class Project(db.Model):
         """Return nicely-formatted date."""
 
         return self.created_at.strftime("%a %b %-d  %Y, %-I:%M %p")
+
+class UserProject(db.Model):
+    """user_projects"""
+
+    __tablename__ = "users_projects"
+
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), primary_key=True)
+    username = db.Column(db.String, db.ForeignKey('users.username'), primary_key=True)
+
+    user = db.relationship(User,backref=backref("users_projects", cascade="all, delete-orphan"))
+    project = db.relationship(Project,backref=backref("users_projects", cascade="all, delete-orphan"))
+
+
 
 
 # class ProjectTag(db.Model):

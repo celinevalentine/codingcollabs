@@ -8,12 +8,17 @@ u1 = User(username="johnv", password="johnv", email="jv@gmail.com", first_name="
 db.session.add(u1)
 db.session.commit()
 
-up1 = UserProject(project_id=1, username=johnv)
-
 p1 = Project(name="memory game", technology="html", about="making a 4x4 grid with pictures in it", level="easy", link="http://github.com")
 
 db.session.add(p1)
 db.session.commit()
+
+up1 = UserProject(project_id=1, username=johnv)
+db.session.add(p1)
+db.session.commit()
+
+
+
 
 
 

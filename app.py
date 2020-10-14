@@ -4,7 +4,7 @@ from models import db, connect_db, User, Project, UserProject
 from forms import RegisterForm, LoginForm, AddProjectForm
 from werkzeug.exceptions import Unauthorized
 from sqlalchemy.exc import IntegrityError
-import requests
+import os, requests
 from secrets import API_Key
 
 CURR_USER_KEY = "curr_user"
@@ -14,13 +14,14 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///codercollab'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = "SECRET!"
- 
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS']= False
  
 debug = DebugToolbarExtension(app)
  
 connect_db(app)
-db.create_all()
+
+##############################################################################
+# User signup/login/logout
     
 @app.before_request
 def add_user_to_g():
@@ -90,6 +91,9 @@ def logout():
     flash("You have successfully logged out.", 'success')
     return redirect("/login")
 
+##############################################################################
+# General user routes:
+
 @app.route('/')
 def landing_page():
     """show landing page for register or sign in"""
@@ -111,24 +115,26 @@ def show_user(username):
 def edit_user(username):
     """Show update user form and process it."""
 
-    user = User.query.get_or_404(username)
-
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
+    user =  g.user
 
     form = UserEditForm(obj=user)
 
     if form.validate_on_submit():
-        user.username = form.username.data
-        user.header_image_url = form.header_image_url.data
-        user.bio = form.bio.data
-        user.email = form.email.data
-        user.password = form.password.data
+        if User.authenticate(user.username, form.password.data):
+            user.username = form.username.data
+            user.header_image_url = form.header_image_url.data
+            user.bio = form.bio.data
+            user.email = form.email.data
+            user.password = form.password.data
 
-        db.session.commit()
+            db.session.commit()
 
-        return redirect(f"/users/{username}")
+            return redirect(f"/users/{username}")
+        
+        flash("Wrong password, please try again.", 'danger')
 
     return render_template("users/edit.html", form=form, user=user)
 
@@ -140,24 +146,15 @@ def remove_user(username):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    user = User.query.get_or_404(username)
-    db.session.delete(user)
+    do_logout()
+
+    db.session.delete(g.user)
     db.session.commit()
-    session.pop("username")
 
-    return redirect("/login")
+    return redirect("/register")
 
-@app.route('/projects')
-def show_projects():
-    """show projects"""
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-
-    projects = Project.query.all()
-
-    return render_template("/projects/show.html", projects=projects)
-
+##############################################################################
+# Projects routes:
 
 @app.route(f"/projects/new", methods=["GET", "POST"])
 def new_project():
@@ -189,10 +186,77 @@ def new_project():
         db.session.commit()
 
 
-        return redirect ("/projects")
+        return redirect (f"/users/{g.user.username}")
 
-    else:
-        return render_template("projects/new.html", form=form)
+    
+    return render_template("projects/new.html", form=form)
+
+@app.route('/projects/<int:id>', methods=["GET", "POST"])
+def detail_project(id):
+    """Show and edit a project."""
+
+    project = Project.query.get_or_404(id)
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    form = AddProjectForm(obj=project)
+
+    if form.validate_on_submit():
+        name = form.name.data
+        technology = form.technology.data
+        about = form.about.data
+        level = form.level.data
+        link = form.link.data
+
+        db.session.commit()
+
+        return redirect(f"/users/{project.username}")
+
+    return render_template("/projects/edit.html", form=form, project=project)
+
+@app.route('/projects/<int:id>/delete', methods=["POST"])
+def delete_project(id):
+    """Delete a project."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    project = Project.query.get_or_404(id)
+    if project.username != g.user.username:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    db.session.delete(project)
+    db.session.commit()
+
+    return redirect(f"/users/{g.user.id}")
+
+##############################################################################
+# Comments Routes:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##############################################################################
+# Tags Routes:
+
 
 
 # @app.route("/posts/<int:post_id>/update", methods=["GET", "POST"])
@@ -234,3 +298,28 @@ def new_project():
 #         db.session.commit()
 
 #     return redirect(f"/users/{post.username}")
+
+##############################################################################
+# Homepage and error pages
+
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    """404 NOT FOUND page."""
+
+    return render_template('404.html'), 404
+
+
+##############################################################################
+# Turn off all caching in Flask
+
+@app.after_request
+def add_header(req):
+    """Add non-caching headers on every request."""
+
+    req.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    req.headers["Pragma"] = "no-cache"
+    req.headers["Expires"] = "0"
+    req.headers['Cache-Control'] = 'public, max-age=0'
+    return req
