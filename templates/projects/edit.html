@@ -9,9 +9,10 @@
 <form>  
 
     {% include "_form.html" %}
+    <a href="/projects">Cancel</a>
     <button class="btn btn-primary"
-    formmethod="GET" formaction="/projects">Edit</button>
-    <button class="btn btn-danger" formmethod="POST" formaction="/projects">Delete</button>
+    formmethod="GET" formaction="/projects/{{project.id}}">Save</button>
+    <button class="btn btn-danger" formmethod="POST" formaction="/projects/{{project.id}}/delete">Delete</button>
 </form>
 
 {% endblock %}

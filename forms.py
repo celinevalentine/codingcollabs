@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, PasswordField, TextAreaField, SelectField
+from wtforms import StringField, IntegerField, PasswordField, TextAreaField, SelectField, BooleanField
 from wtforms.validators import InputRequired, Email, Length, URL, NumberRange, Optional, DataRequired
 
 class RegisterForm(FlaskForm):
@@ -59,9 +59,14 @@ class AddProjectForm(FlaskForm):
         "Source Code",
         validators=[InputRequired(), URL()]
     )
+    availability = BooleanField("Available")
 
+    
 class DeleteForm(FlaskForm):
-    """Delete form -- this form is intentionally blank."""
+    """Delete form"""
+
+
+
 
 
 

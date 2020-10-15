@@ -1,7 +1,7 @@
 from flask import Flask, request, redirect, render_template, flash, session, g, abort, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, Project, UserProject
-from forms import RegisterForm, LoginForm, AddProjectForm
+from forms import RegisterForm, LoginForm, AddProjectForm, DeleteForm
 from werkzeug.exceptions import Unauthorized
 from sqlalchemy.exc import IntegrityError
 import os, requests
@@ -155,6 +155,16 @@ def remove_user(username):
 
 ##############################################################################
 # Projects routes:
+@app.route("/projects")
+def show_projects():
+    """show all projects"""
+    
+    projects = Project.query.all()
+
+
+    return render_template('projects/show.html', projects=projects)
+
+
 
 @app.route(f"/projects/new", methods=["GET", "POST"])
 def new_project():
@@ -172,6 +182,7 @@ def new_project():
         about = form.about.data
         level = form.level.data
         link = form.link.data
+        availability = form.availability.data
 
         project = Project(
             name=name,
@@ -179,20 +190,26 @@ def new_project():
             about=about,
             level=level,
             link=link,
-            username=username
+            availability=availability
         )
 
         db.session.add(project)
         db.session.commit()
 
 
-        return redirect (f"/users/{g.user.username}")
+        return redirect ("/projects")
 
-    
     return render_template("projects/new.html", form=form)
-
-@app.route('/projects/<int:id>', methods=["GET", "POST"])
+@app.route('/projects/<int:id>')
 def detail_project(id):
+    """show details of a project"""
+    project = Project.query.get_or_404(id)
+
+    return render_template('projects/detail.html', project=project)
+
+
+@app.route('/projects/<int:id>/edit', methods=["GET", "POST"])
+def edit_project(id):
     """Show and edit a project."""
 
     project = Project.query.get_or_404(id)
@@ -209,30 +226,28 @@ def detail_project(id):
         about = form.about.data
         level = form.level.data
         link = form.link.data
+        availability=availability
 
         db.session.commit()
 
-        return redirect(f"/users/{project.username}")
+        return redirect(f"/projects")
 
     return render_template("/projects/edit.html", form=form, project=project)
 
 @app.route('/projects/<int:id>/delete', methods=["POST"])
 def delete_project(id):
     """Delete a project."""
-
+    project = Project.query.get_or_404(id)
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
+    
+    form = DeleteForm()
+    if form.validate_on_submit():
+        db.session.delete(project)
+        db.session.commit()
 
-    project = Project.query.get_or_404(id)
-    if project.username != g.user.username:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-
-    db.session.delete(project)
-    db.session.commit()
-
-    return redirect(f"/users/{g.user.id}")
+    return redirect('/projects')
 
 ##############################################################################
 # Comments Routes:
@@ -304,11 +319,11 @@ def delete_project(id):
 
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    """404 NOT FOUND page."""
+# @app.errorhandler(404)
+# def page_not_found(e):
+#     """404 NOT FOUND page."""
 
-    return render_template('404.html'), 404
+#     return render_template('404.html'), 404
 
 
 ##############################################################################

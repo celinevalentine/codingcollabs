@@ -18,7 +18,9 @@ class User(db.Model):
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
 
-    projects = db.relationship('Project', secondary = "users_projects")
+    users_projects = db.relationship('UserProject', backref='users', cascade="all, delete")
+
+    projects = db.relationship('Project', secondary = "users_projects", backref='users', cascade="all, delete-orphan", single_parent=True)
 
     @property
     def full_name(self):
@@ -66,8 +68,9 @@ class Project(db.Model):
         db.String, nullable=False)
     level = db.Column(db.String, nullable=False)
     link = db.Column(db.String, nullable=False)
+    availability = db.Column(db.Boolean,nullable=False,default=True)
 
-    users = db.relationship('User', secondary = "users_projects")
+    users_projects = db.relationship('UserProject', backref='projects', cascade="all, delete")
 
 
     @property
@@ -84,8 +87,8 @@ class UserProject(db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), primary_key=True)
     username = db.Column(db.String, db.ForeignKey('users.username'), primary_key=True)
 
-    user = db.relationship(User,backref=backref("users_projects", cascade="all, delete-orphan"))
-    project = db.relationship(Project,backref=backref("users_projects", cascade="all, delete-orphan"))
+    # user = db.relationship(User,backref=backref("users_projects", cascade="all, delete-orphan"))
+    # project = db.relationship(Project,backref=backref("users_projects", cascade="all, delete-orphan"))
 
 
 

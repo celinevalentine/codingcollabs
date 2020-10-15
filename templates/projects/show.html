@@ -10,11 +10,11 @@
 
     <h2 class="mt-4">Projects</h2>
 
-    <form class="form-inline" action="/">
-      <input class="form-control mr-sm-2" type="search" placeholder="search" aria-label="Search" name="search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-      </form>
+  
 
+    <div>
+  </div>
+  <div>
       <p>
         <a href="/projects/new" class="btn btn-success">
           Add a Project
@@ -25,29 +25,25 @@
       {% for project in projects %}
 
       <li>
-        <p>{{ project.name }}</p>
-        <span>{{ project.technology}}</span>
+        <a href="/projects/{{project.id}}">{{ project.name }}</a>
 
       </li>
 
       <form>
-        {{form.hidden_tag()}}
-        <!-- <button class="btn btn-primary"
+        {% if g.user %}
+
+        <button class="btn btn-primary"
                 formmethod="GET"
-                formaction="url_for('edit_project', project_id=project.id)">
-          Edit
-        </button>
+                formaction="/projects/{{project.id}}/edit">Edit</button>
         <button class="btn btn-danger"
                 formmethod="POST"
-                formaction="url_for('delete_project', project_id=project.id)">
-          Delete
-        </button> -->
+                formaction="/projects/{{project.id}}/delete">Delete</button>
       </form>
-
+      {% endif %}
       {% endfor %}
     </ul>
 
-  </div>
+ 
 </div>
 
 {% endblock %}

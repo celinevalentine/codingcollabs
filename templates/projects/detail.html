@@ -1,0 +1,25 @@
+
+{% extends 'base.html' %}
+
+{% block title %} {{ project.name }}{% endblock %}
+
+{% block content %}
+<h2>Project Details</h2>
+  <ul>
+      <li>Technology:{{project.technology}}</li>
+      <li>About:{{project.about}}</li>
+      <li>Difficulty Level: {{project.level}}</li>
+      <li>Source Code:{{project.link}}</li>
+      <li>Originators:{{g.user.username}}</li>
+      <li>Contributors:</li>
+      <li>Availability:{{project.availability}}</li>
+  </ul>
+  <form>
+  <a href="/projects/join" class="btn btn-success">Join</a>
+  <a href="/projects" class="btn btn-primary">Go Back</a>
+
+    <button class="btn btn-info"formmethod="GET" formaction="/projects/{{project.id}}/edit">Edit</button>
+    <button class="btn btn-danger" formmethod="POST" formaction="/projects/{{project.id}}/delete">Delete</button> 
+  </form>
+
+{% endblock %}
