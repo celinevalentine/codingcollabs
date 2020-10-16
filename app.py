@@ -1,11 +1,11 @@
 from flask import Flask, request, redirect, render_template, flash, session, g, abort, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, Project, UserProject
-from forms import RegisterForm, LoginForm, AddProjectForm, DeleteForm
+from forms import RegisterForm, LoginForm, UserEditForm,AddProjectForm, UserDeleteForm
 from werkzeug.exceptions import Unauthorized
 from sqlalchemy.exc import IntegrityError
 import os, requests
-from secrets import API_Key
+# from secrets import API_Key
 
 CURR_USER_KEY = "curr_user"
 
@@ -120,7 +120,7 @@ def edit_user(username):
         return redirect("/")
     user =  g.user
 
-    form = RegisterForm(obj=user)
+    form = UserEditForm(obj=user)
 
     if form.validate_on_submit():
         if User.authenticate(user.username, form.password.data):
@@ -148,8 +148,10 @@ def remove_user(username):
 
     do_logout(username)
 
-    db.session.delete(g.user)
-    db.session.commit()
+    form = UserDeleteForm()
+    if form.validate_on_submit():
+        db.session.delete(g.user)
+        db.session.commit()
 
     return redirect("/register")
 
@@ -226,7 +228,7 @@ def edit_project(id):
         about = form.about.data
         level = form.level.data
         link = form.link.data
-        availability=availability
+        availability=form.availability.data
 
         db.session.commit()
 

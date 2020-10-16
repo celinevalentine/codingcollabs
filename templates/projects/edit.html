@@ -11,7 +11,7 @@
     {% include "_form.html" %}
     <a href="/projects">Cancel</a>
     <button class="btn btn-primary"
-    formmethod="GET" formaction="/projects/{{project.id}}">Save</button>
+    formmethod="POST">Save</button>
     <button class="btn btn-danger" formmethod="POST" formaction="/projects/{{project.id}}/delete">Delete</button>
 </form>
 

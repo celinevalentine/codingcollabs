@@ -62,9 +62,9 @@ class AddProjectForm(FlaskForm):
     availability = BooleanField("Available")
 
     
-class DeleteForm(FlaskForm):
+class UserDeleteForm(FlaskForm):
     """Delete form"""
-
+    password = PasswordField("Password", validators=[InputRequired()])
 
 
 
