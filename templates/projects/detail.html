@@ -6,14 +6,16 @@
 {% block content %}
 <h2>Project Details</h2>
   <ul>
-      <li>Technology:{{project.technology}}</li>
+    <li>Name: {{project.name}}</li>
+    <li>Technology:{{project.technology}}</li>
       <li>About:{{project.about}}</li>
       <li>Difficulty Level: {{project.level}}</li>
-      <li>Source Code:{{project.link}}</li>
+      <li>Source Code: <a href="{{project.link}}">{{project.link}}</a></li>
       <li>Originators:{{g.user.username}}</li>
       <li>Contributors:</li>
       <li>Availability:{{project.availability}}</li>
   </ul>
+  
   <form>
   <a href="/projects/join" class="btn btn-success">Join</a>
   <a href="/projects" class="btn btn-primary">Go Back</a>

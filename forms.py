@@ -7,7 +7,7 @@ class RegisterForm(FlaskForm):
 
     username = StringField(
         "Username",
-        validators=[InputRequired()],
+        validators=[InputRequired()]
     )
     password = PasswordField(
         "Password",
@@ -36,7 +36,7 @@ class UserEditForm(FlaskForm):
 
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('E-mail', validators=[DataRequired(), Email()])
-    header_image_url = StringField('(Optional) Header Image URL')
+    profile_image_url = StringField('(Optional) Profile Image URL')
     bio = TextAreaField('(Optional) Tell us about yourself')
     password = PasswordField('Password', validators=[Length(min=6)])
 class AddProjectForm(FlaskForm):
@@ -62,10 +62,6 @@ class AddProjectForm(FlaskForm):
     availability = BooleanField("Available")
 
     
-class UserDeleteForm(FlaskForm):
-    """Delete form"""
-    password = PasswordField("Password", validators=[InputRequired()])
-
 
 
 

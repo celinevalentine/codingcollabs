@@ -30,16 +30,8 @@
       </li>
 
       <form>
-        {% if g.user %}
-
-        <button class="btn btn-primary"
-                formmethod="GET"
-                formaction="/projects/{{project.id}}/edit">Edit</button>
-        <button class="btn btn-danger"
-                formmethod="POST"
-                formaction="/projects/{{project.id}}/delete">Delete</button>
-      </form>
-      {% endif %}
+     
+    
       {% endfor %}
     </ul>
 

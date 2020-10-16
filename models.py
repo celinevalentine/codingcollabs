@@ -7,6 +7,8 @@ bcrypt = Bcrypt()
  
 db = SQLAlchemy()
 
+# DEFAULT_IMAGE_URL = "https://www.freeiconspng.com/uploads/icon-user-blue-symbol-people-person-generic--public-domain--21.png"
+
 class User(db.Model):
     """User"""
 

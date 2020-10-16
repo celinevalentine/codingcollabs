@@ -1,7 +1,7 @@
 from flask import Flask, request, redirect, render_template, flash, session, g, abort, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, Project, UserProject
-from forms import RegisterForm, LoginForm, UserEditForm,AddProjectForm, UserDeleteForm
+from forms import RegisterForm, LoginForm, UserEditForm,AddProjectForm
 from werkzeug.exceptions import Unauthorized
 from sqlalchemy.exc import IntegrityError
 import os, requests
@@ -118,17 +118,17 @@ def edit_user(username):
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-    user =  g.user
+    user = g.user
 
     form = UserEditForm(obj=user)
 
     if form.validate_on_submit():
         if User.authenticate(user.username, form.password.data):
-            user.username = form.username.data
-            user.header_image_url = form.header_image_url.data
+           
+            user.profile_image_url = form.profile_image_url.data
             user.bio = form.bio.data
             user.email = form.email.data
-            user.password = form.password.data
+           
 
             db.session.commit()
 
@@ -148,10 +148,8 @@ def remove_user(username):
 
     do_logout(username)
 
-    form = UserDeleteForm()
-    if form.validate_on_submit():
-        db.session.delete(g.user)
-        db.session.commit()
+    db.session.delete(g.user)
+    db.session.commit()
 
     return redirect("/register")
 
@@ -214,11 +212,11 @@ def detail_project(id):
 def edit_project(id):
     """Show and edit a project."""
 
-    project = Project.query.get_or_404(id)
-
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
+    
+    project = Project.query.get_or_404(id)
 
     form = AddProjectForm(obj=project)
 
@@ -232,22 +230,22 @@ def edit_project(id):
 
         db.session.commit()
 
-        return redirect(f"/projects")
+        return redirect(f"/projects/{project.id}")
 
     return render_template("/projects/edit.html", form=form, project=project)
 
 @app.route('/projects/<int:id>/delete', methods=["POST"])
 def delete_project(id):
     """Delete a project."""
-    project = Project.query.get_or_404(id)
+    
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
     
-    form = DeleteForm()
-    if form.validate_on_submit():
-        db.session.delete(project)
-        db.session.commit()
+    project = Project.query.get_or_404(id)
+
+    db.session.delete(project)
+    db.session.commit()
 
     return redirect('/projects')
 
