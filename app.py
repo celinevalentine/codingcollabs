@@ -120,7 +120,7 @@ def edit_user(username):
         return redirect("/")
     user =  g.user
 
-    form = UserEditForm(obj=user)
+    form = RegisterForm(obj=user)
 
     if form.validate_on_submit():
         if User.authenticate(user.username, form.password.data):
@@ -146,7 +146,7 @@ def remove_user(username):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    do_logout()
+    do_logout(username)
 
     db.session.delete(g.user)
     db.session.commit()
