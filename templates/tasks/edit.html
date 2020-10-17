@@ -1,0 +1,18 @@
+
+{% extends 'base.html' %}
+
+{% block title %} Edit Task{% endblock %}
+
+{% block content %}
+<h2>Update a Task</h2>
+  
+<form>  
+
+    {% include "_form.html" %}
+    <a class="btn btn-info" href="/tasks">Cancel</a>
+    <button class="btn btn-primary"
+    formmethod="POST" formaction="/tasks/{{task.id}}/edit">Save</button>
+    <button class="btn btn-danger" formmethod="POST" formaction="/tasks/{{task.id}}/delete">Delete</button>
+</form>
+
+{% endblock %}

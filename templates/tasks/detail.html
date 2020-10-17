@@ -1,0 +1,21 @@
+
+{% extends 'base.html' %}
+
+{% block title %} {{ task.title }}{% endblock %}
+
+{% block content %}
+<h2>Task Details</h2>
+  <ul>
+    <li>Task Name: {{task.title}}</li>
+    <li>Date Created:{{task.friendly_date}}</li>
+    <li>Details:{{task.notes}}</li>
+  </ul>
+  
+  <form>
+  <a href="/tasks" class="btn btn-primary">Go Back</a>
+
+    <button class="btn btn-info"formmethod="GET" formaction="/tasks/{{task.id}}/edit">Edit</button>
+    <button class="btn btn-danger" formmethod="POST" formaction="/tasks/{{task.id}}/delete">Delete</button> 
+  </form>
+
+{% endblock %}

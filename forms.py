@@ -34,11 +34,12 @@ class LoginForm(FlaskForm):
 class UserEditForm(FlaskForm):
     """Form for editing a user."""
 
-    username = StringField('Username', validators=[DataRequired()])
+    # username = StringField('Username', validators=[DataRequired()])
     email = StringField('E-mail', validators=[DataRequired(), Email()])
     profile_image_url = StringField('(Optional) Profile Image URL')
     bio = TextAreaField('(Optional) Tell us about yourself')
-    password = PasswordField('Password', validators=[Length(min=6)])
+    location = StringField('(Optional) Location')
+    password = PasswordField('Password',validators=[DataRequired()])
 class AddProjectForm(FlaskForm):
     """Add project form."""
     name = StringField(
@@ -61,7 +62,12 @@ class AddProjectForm(FlaskForm):
     )
     availability = BooleanField("Available")
 
-    
+class AddTaskForm(FlaskForm):
+    """Add task form."""
+    project_id = IntegerField("Project ID",validators=[InputRequired()])
+    title = StringField(
+    "Task Name", validators=[InputRequired()])
+    notes = TextAreaField("Notes", validators=[InputRequired()])
 
 
 

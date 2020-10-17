@@ -6,6 +6,7 @@
 {% block content %}
 <h2>Project Details</h2>
   <ul>
+    <li>Project ID: {{project.id}}</li>
     <li>Name: {{project.name}}</li>
     <li>Technology:{{project.technology}}</li>
       <li>About:{{project.about}}</li>
@@ -17,7 +18,7 @@
   </ul>
   
   <form>
-  <a href="/projects/join" class="btn btn-success">Join</a>
+  <a href="/tasks/new" class="btn btn-success">Join</a>
   <a href="/projects" class="btn btn-primary">Go Back</a>
 
     <button class="btn btn-info"formmethod="GET" formaction="/projects/{{project.id}}/edit">Edit</button>

@@ -1,7 +1,7 @@
 from flask import Flask, request, redirect, render_template, flash, session, g, abort, url_for
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User, Project, UserProject
-from forms import RegisterForm, LoginForm, UserEditForm,AddProjectForm
+from models import db, connect_db, User, Project, UserProject, Task
+from forms import RegisterForm, LoginForm, UserEditForm,AddProjectForm, AddTaskForm
 from werkzeug.exceptions import Unauthorized
 from sqlalchemy.exc import IntegrityError
 import os, requests
@@ -123,18 +123,21 @@ def edit_user(username):
     form = UserEditForm(obj=user)
 
     if form.validate_on_submit():
-        if User.authenticate(user.username, form.password.data):
-           
-            user.profile_image_url = form.profile_image_url.data
-            user.bio = form.bio.data
-            user.email = form.email.data
+        # if User.authenticate(user.username, form.password.data):
+        # user.username= form.username.data
+        user.password = form.password.data
+        user.profile_image_url = form.profile_image_url.data
+        user.bio = form.bio.data
+        user.email = form.email.data
+        user.location = form.location.data
+            
            
 
-            db.session.commit()
+        db.session.commit()
 
-            return redirect(f"/users/{username}")
+        return redirect(f"/users/{username}")
         
-        flash("Wrong password, please try again.", 'danger')
+        # flash("Wrong password, please try again.", 'danger')
 
     return render_template("users/edit.html", form=form, user=user)
 
@@ -221,12 +224,12 @@ def edit_project(id):
     form = AddProjectForm(obj=project)
 
     if form.validate_on_submit():
-        name = form.name.data
-        technology = form.technology.data
-        about = form.about.data
-        level = form.level.data
-        link = form.link.data
-        availability=form.availability.data
+        project.name = form.name.data
+        project.technology = form.technology.data
+        project.about = form.about.data
+        project.level = form.level.data
+        project.link = form.link.data
+        project.availability=form.availability.data
 
         db.session.commit()
 
@@ -248,6 +251,110 @@ def delete_project(id):
     db.session.commit()
 
     return redirect('/projects')
+
+##############################################################################
+# Task Routes:
+@app.route("/tasks")
+def show_tasks():
+    """show all tasks"""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    tasks = Task.query.all()
+
+    return render_template('tasks/show.html', tasks=tasks)
+
+@app.route(f"/tasks/new", methods=["GET", "POST"])
+def new_task():
+    """Add the task form and process it."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    form = AddTaskForm()
+
+    if form.validate_on_submit():
+        title = form.title.data
+        notes = form.notes.data
+       
+        task = Task(
+            title = title,
+            notes = notes
+            )
+
+        db.session.add(task)
+        db.session.commit()
+
+
+        return redirect ("/tasks")
+
+    return render_template("tasks/new.html", form=form)
+
+
+@app.route('/task/<int:id>')
+def detail_task(id):
+    """show details of a task"""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    task = Task.query.get_or_404(id)
+
+    return render_template('tasks/detail.html', task=task)
+
+
+@app.route('/tasks/<int:id>/edit', methods=["GET", "POST"])
+def edit_task(id):
+    """Show and edit a task."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    task = Task.query.get_or_404(id)
+
+    form = AddTaskForm(obj=task)
+
+    if form.validate_on_submit():
+        task.title = form.title.data
+        task.notes = form.notes.data
+       
+        db.session.commit()
+
+        return redirect(f"/tasks/{task.id}")
+
+    return render_template("tasks/edit.html", form=form, task=task)
+
+@app.route('/tasks/<int:id>/delete', methods=["POST"])
+def delete_task(id):
+    """Delete a task."""
+    
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    task = Task.query.get_or_404(id)
+
+    db.session.delete(task)
+    db.session.commit()
+
+    return redirect('/tasks')
+
+
+
+
+
+
+
+
+
+
+
+
 
 ##############################################################################
 # Comments Routes:

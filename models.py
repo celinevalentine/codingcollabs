@@ -1,13 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import backref
-import datetime
+from datetime import datetime
 from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt()
  
 db = SQLAlchemy()
-
-# DEFAULT_IMAGE_URL = "https://www.freeiconspng.com/uploads/icon-user-blue-symbol-people-person-generic--public-domain--21.png"
 
 class User(db.Model):
     """User"""
@@ -19,6 +17,9 @@ class User(db.Model):
     email = db.Column(db.String, nullable=False)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
+    profile_image_url = db.Column(db.Text,default="/static/images/icon-user-default.png")
+    bio = db.Column(db.Text)
+    location = db.Column(db.Text)
 
     users_projects = db.relationship('UserProject', backref='users', cascade="all, delete")
 
@@ -74,6 +75,9 @@ class Project(db.Model):
 
     users_projects = db.relationship('UserProject', backref='projects', cascade="all, delete")
 
+    tasks = db.relationship('Task',backref="projects", cascade="all, delete-orphan")
+
+
 
     @property
     def friendly_date(self):
@@ -89,8 +93,21 @@ class UserProject(db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), primary_key=True)
     username = db.Column(db.String, db.ForeignKey('users.username'), primary_key=True)
 
-    # user = db.relationship(User,backref=backref("users_projects", cascade="all, delete-orphan"))
-    # project = db.relationship(Project,backref=backref("users_projects", cascade="all, delete-orphan"))
+class Task(db.Model):
+    """Task."""
+
+    __tablename__ = "tasks"
+
+    id = db.Column(db.Integer, autoincrement=True,primary_key=True)
+    title = db.Column(db.Text, nullable=False)
+    # date = db.Column(db.DateTime, default=datetime.utcnow)
+    notes = db.Column(db.String, nullable=False)
+
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'),nullable=True)
+
+   
+   
+
 
 
 
