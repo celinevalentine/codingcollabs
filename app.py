@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///codercollab'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-app.config['SECRET_KEY'] = "SECRET!"
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY','izURL73j^nu24Bp')
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS']= False
  
 debug = DebugToolbarExtension(app)
