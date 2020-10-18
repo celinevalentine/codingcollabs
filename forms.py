@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, PasswordField, TextAreaField, SelectField, BooleanField
 from wtforms.validators import InputRequired, Email, Length, URL, NumberRange, Optional, DataRequired
+from wtforms.fields.html5 import DateField
 
 class RegisterForm(FlaskForm):
     """User registration form."""
@@ -64,11 +65,13 @@ class AddProjectForm(FlaskForm):
 
 class AddTaskForm(FlaskForm):
     """Add task form."""
-    project_id = IntegerField("Project ID",validators=[InputRequired()])
+
     title = StringField(
     "Task Name", validators=[InputRequired()])
     notes = TextAreaField("Notes", validators=[InputRequired()])
-
+    # date_created = DateField('Date Created', format='%m/%d/%Y')
+    status = SelectField("Status", choices=[('started','started'),('in progress', 'in progress'),('done','done')])
+    
 
 
 

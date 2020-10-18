@@ -254,26 +254,28 @@ def delete_project(id):
 
 ##############################################################################
 # Task Routes:
-@app.route("/tasks")
-def show_tasks():
+@app.route(f"/projects/<int:id>/tasks")
+def show_tasks(id):
     """show all tasks"""
 
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-    
+
+    project = Project.query.get_or_404(id)
     tasks = Task.query.all()
 
-    return render_template('tasks/show.html', tasks=tasks)
+    return render_template('tasks/show.html', project=project,tasks=tasks)
 
-@app.route(f"/tasks/new", methods=["GET", "POST"])
-def new_task():
+@app.route(f"/projects/<int:id>/tasks/new", methods=["GET", "POST"])
+def new_task(id):
     """Add the task form and process it."""
 
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
+    project = Project.query.get_or_404(id)
     form = AddTaskForm()
 
     if form.validate_on_submit():
@@ -289,60 +291,64 @@ def new_task():
         db.session.commit()
 
 
-        return redirect ("/tasks")
+        return redirect (f"/projects/{project.id}/tasks")
 
-    return render_template("tasks/new.html", form=form)
+    return render_template('tasks/new.html', project=project, form=form)
 
 
-@app.route('/task/<int:id>')
-def detail_task(id):
+@app.route('/projects/<int:id>/tasks/<int:task_id>')
+def detail_task(id,task_id):
     """show details of a task"""
 
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
+    
+    project = Project.query.get_or_404(id)
+    task = Task.query.get_or_404(task_id)
 
-    task = Task.query.get_or_404(id)
-
-    return render_template('tasks/detail.html', task=task)
+    return render_template('tasks/detail.html', project=project, task=task)
 
 
-@app.route('/tasks/<int:id>/edit', methods=["GET", "POST"])
-def edit_task(id):
+@app.route('/projects/<int:id>/tasks/<int:task_id>/edit', methods=["GET", "POST"])
+def edit_task(id,task_id):
     """Show and edit a task."""
 
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
     
-    task = Task.query.get_or_404(id)
+    project = Project.query.get_or_404(id)
+    task = Task.query.get_or_404(task_id)
 
     form = AddTaskForm(obj=task)
 
     if form.validate_on_submit():
         task.title = form.title.data
         task.notes = form.notes.data
+        task.status = form.status.data
        
         db.session.commit()
 
-        return redirect(f"/tasks/{task.id}")
+        return redirect(f"/projects/{project.id}/tasks/{task.task_id}")
 
-    return render_template("tasks/edit.html", form=form, task=task)
+    return render_template("tasks/edit.html", project=project,form=form, task=task)
 
-@app.route('/tasks/<int:id>/delete', methods=["POST"])
-def delete_task(id):
+@app.route('/projects/<int:id>/tasks/<int:task_id>/delete', methods=["POST"])
+def delete_task(id,task_id):
     """Delete a task."""
     
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-    
-    task = Task.query.get_or_404(id)
+
+    project = Project.query.get_or_404(id)
+    task = Task.query.get_or_404(task_id)
 
     db.session.delete(task)
     db.session.commit()
 
-    return redirect('/tasks')
+    return redirect(f'/projects/{project.id}/tasks')
 
 
 

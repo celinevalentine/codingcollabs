@@ -9,10 +9,10 @@
 <form>  
 
     {% include "_form.html" %}
-    <a class="btn btn-info" href="/tasks">Cancel</a>
+    <a class="btn btn-info" href="/projects/{{project.id}}/tasks">Cancel</a>
     <button class="btn btn-primary"
-    formmethod="POST" formaction="/tasks/{{task.id}}/edit">Save</button>
-    <button class="btn btn-danger" formmethod="POST" formaction="/tasks/{{task.id}}/delete">Delete</button>
+    formmethod="POST" formaction="/projects/{{project.id}}/tasks/{{task.task_id}}/edit">Save</button>
+    <button class="btn btn-danger" formmethod="POST" formaction="/projects/{{project.id}}/tasks/{{task.task_id}}/delete">Delete</button>
 </form>
 
 {% endblock %}

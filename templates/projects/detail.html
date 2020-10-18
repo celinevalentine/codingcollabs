@@ -12,13 +12,13 @@
       <li>About:{{project.about}}</li>
       <li>Difficulty Level: {{project.level}}</li>
       <li>Source Code: <a href="{{project.link}}">{{project.link}}</a></li>
-      <li>Originators:{{g.user.username}}</li>
+      <li>Originators:<a href="/users/{{g.user.username}}">{{g.user.username}}</a></li>
       <li>Contributors:</li>
       <li>Availability:{{project.availability}}</li>
   </ul>
   
   <form>
-  <a href="/tasks/new" class="btn btn-success">Join</a>
+  <a href="/projects/{{project.id}}/tasks" class="btn btn-success">Join</a>
   <a href="/projects" class="btn btn-primary">Go Back</a>
 
     <button class="btn btn-info"formmethod="GET" formaction="/projects/{{project.id}}/edit">Edit</button>

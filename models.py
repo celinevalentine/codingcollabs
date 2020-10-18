@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import backref
-from datetime import datetime
+from datetime import date
 from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt()
@@ -77,14 +77,6 @@ class Project(db.Model):
 
     tasks = db.relationship('Task',backref="projects", cascade="all, delete-orphan")
 
-
-
-    @property
-    def friendly_date(self):
-        """Return nicely-formatted date."""
-
-        return self.created_at.strftime("%a %b %-d  %Y, %-I:%M %p")
-
 class UserProject(db.Model):
     """user_projects"""
 
@@ -98,14 +90,19 @@ class Task(db.Model):
 
     __tablename__ = "tasks"
 
-    id = db.Column(db.Integer, autoincrement=True,primary_key=True)
-    title = db.Column(db.Text, nullable=False)
-    # date = db.Column(db.DateTime, default=datetime.utcnow)
+    task_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
+    title = db.Column(db.String, nullable=False)
+    date = db.Column(db.DateTime, default=date.today())
+    status = db.Column(db.String, nullable=False)
     notes = db.Column(db.String, nullable=False)
 
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'),nullable=True)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'),nullable=False, default=1)
 
-   
+    @property
+    def friendly_date(self):
+        """Return nicely-formatted date."""
+
+        return self.date.strftime("%a %b %-d  %Y, %-I:%M %p")
    
 
 

@@ -1,4 +1,4 @@
-from models import User, Project, UserProject, db
+from models import User, Project, UserProject,Task, db
 from app import app
 
 db.create_all()
@@ -17,7 +17,10 @@ up1 = UserProject(project_id=1, username="johnv")
 db.session.add(up1)
 db.session.commit()
 
+t1 = Task(title="make html", notes="html marker", status="done")
 
+db.session.add(t1)
+db.session.commit()
 
 
 
