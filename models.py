@@ -96,7 +96,7 @@ class Task(db.Model):
     status = db.Column(db.String, nullable=False)
     notes = db.Column(db.String, nullable=False)
 
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'),nullable=False, default=1)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'),nullable=False)
 
     @property
     def friendly_date(self):

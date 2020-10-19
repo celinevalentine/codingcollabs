@@ -281,10 +281,13 @@ def new_task(id):
     if form.validate_on_submit():
         title = form.title.data
         notes = form.notes.data
+        status = form.status.data
        
         task = Task(
             title = title,
-            notes = notes
+            notes = notes,
+            status = status,
+            project_id = project.id
             )
 
         db.session.add(task)
