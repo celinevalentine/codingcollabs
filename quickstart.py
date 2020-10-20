@@ -26,7 +26,7 @@ def main():
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
+            creds = flow.run_local_server(port=5000)
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
@@ -45,4 +45,4 @@ def main():
             print(u'{0} ({1})'.format(item['title'], item['id']))
 
 if __name__ == '__main__':
-    main()
+    main() 

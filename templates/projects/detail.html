@@ -12,8 +12,8 @@
       <li>About:{{project.about}}</li>
       <li>Difficulty Level: {{project.level}}</li>
       <li>Source Code: <a href="{{project.link}}">{{project.link}}</a></li>
-      <li>Originators:<a href="/users/{{g.user.username}}">{{g.user.username}}</a></li>
-      <li>Contributors:</li>
+      <li>Originator:<a href="/users/{{user.originator.username}}">{{user.originator.username}}</a></li>
+      <li>Contributors:<a href="/users/{{project.users.username}}">{{user.originator.username}}</a></li>
       <li>Availability:{{project.availability}}</li>
   </ul>
   

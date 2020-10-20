@@ -21,7 +21,6 @@ class User(db.Model):
     bio = db.Column(db.Text)
     location = db.Column(db.Text)
 
-    users_projects = db.relationship('UserProject', backref='users', cascade="all, delete")
 
     projects = db.relationship('Project', secondary = "users_projects", backref='users', cascade="all, delete-orphan", single_parent=True)
 
@@ -72,6 +71,9 @@ class Project(db.Model):
     level = db.Column(db.String, nullable=False)
     link = db.Column(db.String, nullable=False)
     availability = db.Column(db.Boolean,nullable=False,default=True)
+    originator_name = db.Column(db.String, db.ForeignKey('users.username'))
+
+    # originator = db.relationship('User', backref='projects', cascade="all, delete")
 
     users_projects = db.relationship('UserProject', backref='projects', cascade="all, delete")
 
