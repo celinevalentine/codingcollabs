@@ -71,7 +71,7 @@ class Project(db.Model):
     level = db.Column(db.String, nullable=False)
     link = db.Column(db.String, nullable=False)
     availability = db.Column(db.Boolean,nullable=False,default=True)
-    originator_name = db.Column(db.String, db.ForeignKey('users.username'))
+    # originator_name = db.Column(db.String, db.ForeignKey('users.username'))
 
     # originator = db.relationship('User', backref='projects', cascade="all, delete")
 

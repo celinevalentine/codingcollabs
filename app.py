@@ -206,6 +206,7 @@ def new_project():
 @app.route('/projects/<int:id>')
 def detail_project(id):
     """show details of a project"""
+    # user = g.user.username
     project = Project.query.get_or_404(id)
 
     return render_template('projects/detail.html', project=project)
