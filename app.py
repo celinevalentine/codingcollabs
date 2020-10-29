@@ -5,7 +5,8 @@ from forms import RegisterForm, LoginForm, UserEditForm,AddProjectForm, AddTaskF
 from werkzeug.exceptions import Unauthorized
 from sqlalchemy.exc import IntegrityError
 import os, requests
-# from secrets import API_Key
+# from secrets import API_Key,API_SECRET
+from helper import get_boards
 
 CURR_USER_KEY = "curr_user"
 
@@ -163,9 +164,10 @@ def show_projects():
     """show all projects"""
     
     projects = Project.query.all()
+    boards = get_boards()
 
 
-    return render_template('projects/show.html', projects=projects)
+    return render_template('projects/show.html', projects=projects, boards=boards)
 
 
 
@@ -264,7 +266,7 @@ def show_tasks(id):
         return redirect("/")
 
     project = Project.query.get_or_404(id)
-    tasks = Task.query.all()
+    tasks = Task.query.filter(Project.id == id).all()
 
     return render_template('tasks/show.html', project=project,tasks=tasks)
 

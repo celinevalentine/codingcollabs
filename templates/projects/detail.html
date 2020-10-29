@@ -17,11 +17,13 @@
   </ul>
   
   <form>
-  <a href="/projects/{{project.id}}/tasks" class="btn btn-success">Join</a>
+  <a href="/projects/{{project.id}}/tasks" class="btn btn-success">See Tasks</a>
   <a href="/projects" class="btn btn-primary">Go Back</a>
 
-    <button class="btn btn-info"formmethod="GET" formaction="/projects/{{project.id}}/edit">Edit</button>
-    <button class="btn btn-danger" formmethod="POST" formaction="/projects/{{project.id}}/delete">Delete</button> 
+    <button class="btn btn-warning"formmethod="GET" formaction="/projects/{{project.id}}/edit">Edit</button>
+    <button class="btn btn-danger" formmethod="POST" formaction="/projects/{{project.id}}/delete">Delete</button>
+    
+
   </form>
 
 {% endblock %}
