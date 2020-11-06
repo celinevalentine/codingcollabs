@@ -8,69 +8,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="f468QY7loJ2w0dji34-yHd0_UNSLEsVNrlju-XhnBr0" />
     <title></title>
+<link rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.css">
+<script src="https://unpkg.com/jquery"></script>
+<script src="https://unpkg.com/bootstrap"></script>
+<link rel="stylesheet"
+    href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+<link rel="stylesheet" href="/static/app.css">
+<link rel="shortcut icon" href="/static/favicon.ico">
 
 </head>
 
-    <link rel="stylesheet"
-        href="https://unpkg.com/bootstrap/dist/css/bootstrap.css">
-  <script src="https://unpkg.com/jquery"></script>
-  <script src="https://unpkg.com/bootstrap"></script>
-  <link rel="stylesheet"
-        href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
-  <link rel="stylesheet" href="/static/app.css">
-  <link rel="shortcut icon" href="/static/favicon.ico">
-  <body class="{% block body_class %}{% endblock %}">
-    <nav class="navbar navbar-expand">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          
-          <a href="/" class="navbar-brand">
-            <span>Coding Collabs</span>
-          </a>
-        </div>
-      
-        {% if g.user %}
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/projects">Projects</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/collabs">Collaborations</a> 
-               
-            <li class="nav-item">
-                <a class="nav-link" href="/resources">Showcases</a> 
-             
-        </nav>
-           
-             
-              {% endif %}
-            </ul>
-          </div>
-        </nav>
 
-        <ul class="nav navbar-nav navbar-right">
-         
-         
-          {% if not g.user %}
-          <li><a href="/register">Sign up</a></li>
-          <li><a href="/login">Log in</a></li>
-          {% else %}
-          <li><a href="/logout">Log out</a></li>
-          {% endif %}
-         
-          
-            
-          
-        </ul>
-      </div>
-    </nav>
+  <body class="{% block body_class %}{% endblock %}">
+    <nav class="navbar navbar-light bg-light navbar-right">
+      <a class="nav-link" class="navbar-brand" href="/">NASA Deep Learners</a>
+   {% if g.user %}
+   
+    <a href="/users/{{g.user.username}}">{{g.user.username}}</a>
+      <a class="nav-link" href="/favorites">My Favorite Pictures</a>
+     
+      <a class="nav-link" href="/logout">Log out</a>
+      {% else %}
+      <a class="nav-link" href="/register">Sign up</a>
+      <a class="nav-link" href="/login">Log in</a>
+      {% endif %} 
+    </nav> 
+           
     <div class="container">
       {% for category, message in get_flashed_messages(with_categories=True) %}
       <div class="alert alert-{{ category }}">{{ message }}</div>
@@ -81,13 +44,13 @@
     
     </div>
 
-<footer class="footer">
+<!-- <footer class="footer">
  
   <div class="footer-copyright text-center py-3">Copyright © 2020 CodingCollabs All rights reserved.
   </div>
  
 
-</footer>
+</footer> -->
 
  
 </body>

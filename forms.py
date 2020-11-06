@@ -28,51 +28,12 @@ class RegisterForm(FlaskForm):
     )
 
 class LoginForm(FlaskForm):
-    """login form"""
+    """User login form"""
     username = StringField("Username", validators=[InputRequired()])
     password = PasswordField("Password", validators=[InputRequired()])
 
 class UserEditForm(FlaskForm):
     """Form for editing a user."""
-
-    # username = StringField('Username', validators=[DataRequired()])
+    
     email = StringField('E-mail', validators=[DataRequired(), Email()])
-    profile_image_url = StringField('(Optional) Profile Image URL')
-    bio = TextAreaField('(Optional) Tell us about yourself')
-    location = StringField('(Optional) Location')
     password = PasswordField('Password',validators=[DataRequired()])
-class AddProjectForm(FlaskForm):
-    """Add project form."""
-    name = StringField(
-        "Name",
-        validators=[InputRequired()],
-    )
-    technology = StringField(
-        "Technology",
-        validators=[InputRequired()],
-    )
-    about = TextAreaField(
-        "About",
-        validators=[InputRequired()]
-    )
-    level = SelectField("Level", choices=[('easy','easy'),('intermediate', 'intermediate'),('hard','hard')])
-    
-    link = StringField(
-        "Source Code",
-        validators=[InputRequired(), URL()]
-    )
-    availability = BooleanField("Available")
-
-class AddTaskForm(FlaskForm):
-    """Add task form."""
-
-    title = StringField(
-    "Task Name", validators=[InputRequired()])
-    notes = TextAreaField("Notes", validators=[InputRequired()])
-    # date_created = DateField('Date Created', format='%m/%d/%Y')
-    status = SelectField("Status", choices=[('started','started'),('in progress', 'in progress'),('done','done')])
-    
-
-
-
-

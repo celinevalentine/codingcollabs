@@ -4,26 +4,16 @@
 
 {% block content %}
 
-<nav class="navbar navbar-expand-lg navbar- bg-light">
-    {% if g.user %}
-    <ul class="nav navbar-nav navbar-right">
-      <li><a href="/users/{{g.user.username}}">{{g.user.username}}</a></li>
-      {% endif %}
-    </ul>
-</nav>
+
+  <div>
+<h1>Welcome to NASA Deep Learners</h1>
+  </div>
+  <p>Search a NASA picture of the day by date.</p>
+  <form class="form-inline" action="/apod">
+    <input class="form-control mr-sm-2" name="search" type="search" placeholder="YYYY-MM-DD" aria-label="Search">
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+  </form>
 
   
- 
-<h1>Welcome to Coding Collabs</h1>
-<ul>
-    <li class="list-group-item list-group-item-primary"><b>Why is this site created?</b></li>
-    <p class="p-3 mb-2 bg-light text-dark">Are you feeling lonely when working on a project? Do you wish you can work on it with a technical person like you who shares the same interest for the project you want to work on. If yes, this site is for you!</p>
-    <li class="list-group-item list-group-item-primary"><b>Who benefits from using this site?</b></li>
-    <p class="p-3 mb-2 bg-light text-dark">You can post any projects that inspire you, whether you are a software developer, UI/UX designers, data scientiests, project managers, etc. Regardless what you do, if you have a project that you want to work on with others, this site is for you!</p>
-    <li class="list-group-item list-group-item-primary"><b>How to use this site?</b></li>
-    <p class="p-3 mb-2 bg-light text-dark">Once you register as a user, you can post unlimited projects and tasks. In order to ensure you find the best team to work on your project, there is a limit of numbers of users per each project. <a href="/register">Join us</a> now to try it out and learn more today!</p>
-      
     
-</ul> 
-
 {% endblock %}

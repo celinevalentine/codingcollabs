@@ -1,20 +1,23 @@
 from flask import Flask, request, redirect, render_template, flash, session, g, abort, url_for
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User, Project, UserProject, Task
-from forms import RegisterForm, LoginForm, UserEditForm,AddProjectForm, AddTaskForm
+from models import db, connect_db, User, UserApod, APOD
+from forms import RegisterForm, LoginForm, UserEditForm
 from werkzeug.exceptions import Unauthorized
 from sqlalchemy.exc import IntegrityError
 import os, requests
-# from secrets import API_Key,API_SECRET
-from helper import get_boards
+from secrets import APOD_API
+from helper import get_apod, load_new_apod
 
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL','postgresql:///codercollab')
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL','postgresql:///codingcollabs')
+# app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY','izURL73j^nu24Bp')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///nasa'
+app.config['SECRET_KEY'] = 'SECRET'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY','izURL73j^nu24Bp')
+
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS']= False
  
 debug = DebugToolbarExtension(app)
@@ -98,6 +101,7 @@ def logout():
 @app.route('/')
 def landing_page():
     """show landing page for register or sign in"""
+    
     return render_template('users/index.html')
 
 @app.route("/users/<username>")
@@ -127,13 +131,7 @@ def edit_user(username):
         # if User.authenticate(user.username, form.password.data):
         # user.username= form.username.data
         user.password = form.password.data
-        user.profile_image_url = form.profile_image_url.data
-        user.bio = form.bio.data
         user.email = form.email.data
-        user.location = form.location.data
-            
-           
-
         db.session.commit()
 
         return redirect(f"/users/{username}")
@@ -158,280 +156,39 @@ def remove_user(username):
     return redirect("/register")
 
 ##############################################################################
-# Projects routes:
-@app.route("/projects")
-def show_projects():
-    """show all projects"""
-    
-    projects = Project.query.all()
-    boards = get_boards()
+# APOD Routes:
 
 
-    return render_template('projects/show.html', projects=projects, boards=boards)
+@app.route("/apod")
+def show_apod():
+    """show apod image"""
+    search_date = request.args['search']
+    get_apod(search_date)
+    load_new_apod()
 
+    apod = APOD.query.all()
 
+    return render_template("apod/show.html",apod=apod)
 
-@app.route(f"/projects/new", methods=["GET", "POST"])
-def new_project():
-    """Add the project form and process it."""
 
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
 
-    form = AddProjectForm()
 
-    if form.validate_on_submit():
-        name = form.name.data
-        technology = form.technology.data
-        about = form.about.data
-        level = form.level.data
-        link = form.link.data
-        availability = form.availability.data
 
-        project = Project(
-            name=name,
-            technology=technology,
-            about=about,
-            level=level,
-            link=link,
-            availability=availability
-        )
 
-        db.session.add(project)
-        db.session.commit()
 
 
-        return redirect ("/projects")
 
-    return render_template("projects/new.html", form=form)
-@app.route('/projects/<int:id>')
-def detail_project(id):
-    """show details of a project"""
-    # user = g.user.username
-    project = Project.query.get_or_404(id)
 
-    return render_template('projects/detail.html', project=project)
 
 
-@app.route('/projects/<int:id>/edit', methods=["GET", "POST"])
-def edit_project(id):
-    """Show and edit a project."""
 
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-    
-    project = Project.query.get_or_404(id)
 
-    form = AddProjectForm(obj=project)
 
-    if form.validate_on_submit():
-        project.name = form.name.data
-        project.technology = form.technology.data
-        project.about = form.about.data
-        project.level = form.level.data
-        project.link = form.link.data
-        project.availability=form.availability.data
 
-        db.session.commit()
 
-        return redirect(f"/projects/{project.id}")
 
-    return render_template("/projects/edit.html", form=form, project=project)
 
-@app.route('/projects/<int:id>/delete', methods=["POST"])
-def delete_project(id):
-    """Delete a project."""
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-    
-    project = Project.query.get_or_404(id)
 
-    db.session.delete(project)
-    db.session.commit()
-
-    return redirect('/projects')
-
-##############################################################################
-# Task Routes:
-@app.route(f"/projects/<int:id>/tasks")
-def show_tasks(id):
-    """show all tasks"""
-
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-
-    project = Project.query.get_or_404(id)
-    tasks = Task.query.filter(Project.id == id).all()
-
-    return render_template('tasks/show.html', project=project,tasks=tasks)
-
-@app.route(f"/projects/<int:id>/tasks/new", methods=["GET", "POST"])
-def new_task(id):
-    """Add the task form and process it."""
-
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-
-    project = Project.query.get_or_404(id)
-    form = AddTaskForm()
-
-    if form.validate_on_submit():
-        title = form.title.data
-        notes = form.notes.data
-        status = form.status.data
-       
-        task = Task(
-            title = title,
-            notes = notes,
-            status = status,
-            project_id = project.id
-            )
-
-        db.session.add(task)
-        db.session.commit()
-
-
-        return redirect (f"/projects/{project.id}/tasks")
-
-    return render_template('tasks/new.html', project=project, form=form)
-
-
-@app.route('/projects/<int:id>/tasks/<int:task_id>')
-def detail_task(id,task_id):
-    """show details of a task"""
-
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-    
-    project = Project.query.get_or_404(id)
-    task = Task.query.get_or_404(task_id)
-
-    return render_template('tasks/detail.html', project=project, task=task)
-
-
-@app.route('/projects/<int:id>/tasks/<int:task_id>/edit', methods=["GET", "POST"])
-def edit_task(id,task_id):
-    """Show and edit a task."""
-
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-    
-    project = Project.query.get_or_404(id)
-    task = Task.query.get_or_404(task_id)
-
-    form = AddTaskForm(obj=task)
-
-    if form.validate_on_submit():
-        task.title = form.title.data
-        task.notes = form.notes.data
-        task.status = form.status.data
-       
-        db.session.commit()
-
-        return redirect(f"/projects/{project.id}/tasks/{task.task_id}")
-
-    return render_template("tasks/edit.html", project=project,form=form, task=task)
-
-@app.route('/projects/<int:id>/tasks/<int:task_id>/delete', methods=["POST"])
-def delete_task(id,task_id):
-    """Delete a task."""
-    
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-
-    project = Project.query.get_or_404(id)
-    task = Task.query.get_or_404(task_id)
-
-    db.session.delete(task)
-    db.session.commit()
-
-    return redirect(f'/projects/{project.id}/tasks')
-
-
-
-
-
-
-
-
-
-
-
-
-
-##############################################################################
-# Comments Routes:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##############################################################################
-# Tags Routes:
-
-
-
-# @app.route("/posts/<int:post_id>/update", methods=["GET", "POST"])
-# def edit_post(post_id):
-#     """Show update-post form and process it."""
-
-#     post = Post.query.get(post_id)
-
-#     if "username" not in session or post.username != session['username']:
-#         raise Unauthorized()
-
-#     form = PostForm(obj=post)
-
-#     if form.validate_on_submit():
-#         post.topic = form.topic.data
-#         post.summary = form.summary.data
-#         post.image_url = form.image_url.data
-
-#         db.session.commit()
-
-#         return redirect("url_for('edit_post', post_id=post.id)")
-
-#     return render_template("posts/edit.html", form=form, post=post)
-
-
-# @app.route("/posts/<int:post_id>/delete", methods=["POST"])
-# def delete_post(post_id):
-#     """Delete a post."""
-#     post = Post.query.get(post_id)
-
-#     if "username" not in session or post.username != session['username']:
-#         raise Unauthorized()
-
-
-#     form = DeleteForm()
-
-#     if form.validate_on_submit():
-#         db.session.delete(post)
-#         db.session.commit()
-
-#     return redirect(f"/users/{post.username}")
 
 ##############################################################################
 # Homepage and error pages
@@ -448,12 +205,12 @@ def delete_task(id,task_id):
 ##############################################################################
 # Turn off all caching in Flask
 
-@app.after_request
-def add_header(req):
-    """Add non-caching headers on every request."""
+# @app.after_request
+# def add_header(req):
+#     """Add non-caching headers on every request."""
 
-    req.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    req.headers["Pragma"] = "no-cache"
-    req.headers["Expires"] = "0"
-    req.headers['Cache-Control'] = 'public, max-age=0'
-    return req
+#     req.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+#     req.headers["Pragma"] = "no-cache"
+#     req.headers["Expires"] = "0"
+#     req.headers['Cache-Control'] = 'public, max-age=0'
+#     return req

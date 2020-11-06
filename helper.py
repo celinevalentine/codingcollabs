@@ -1,33 +1,59 @@
+from models import User, APOD, UserApod,db
+from secrets import APOD_API
 import requests
-from secrets import API_Key, API_TOKEN
-
-BASE_URL = "https://api.trello.com"
+from flask import request
 
 
-def get_boards():
-    """ get list of all boards to determine the ID for further functions """
-    url = "https://api.trello.com/1/members/me/boards"
 
-    querystring = {"fields":"name,url","key":API_TOKEN,"token":API_Key}
+BASE_URL = "https://api.nasa.gov"
+
+def get_apod(search_date):
+    """Make API call for all apods."""
+
+    search_date = request.args['search']
+
+    url = f"{BASE_URL}/planetary/apod"
+
+    querystring = {"date":f"{search_date}","hd":"False","api_key": APOD_API}
     payload = ""
-    headers = {'cookie': 'dsc=da3e99eaef39e470170776c4e104cb4c0c2c72b2695678276eff16746ac5f6c9'}
+    response = requests.request("GET", url, data=payload, params=querystring)
 
-    response = requests.request("GET", url, data=payload, headers=headers, params=querystring)
+    data = response.json()
 
-    print(response.text)
-    name = response.text['name']
-    id = response.text['id']
-   
+    title = data['title']
+    date = data['date']
+    hdurl = data['hdurl']
+    explanation = data['explanation']
+
+    apod = {
+            'title': title,
+            'date': date,
+            'hdurl': hdurl,
+            'explanation': explanation
+            }
+            
+    return apod
 
 
-def get_lists_from_board(board_id):
-    """
-        Access board with ID board_id in the client instance
-        and print all non-archived lists with their non-archived  
-        cards 
-    """
+def load_new_apod():
 
-  
+    db.drop_all()
+    db.create_all()
+
+    search_date = request.form['search']
+
+    data = get_apod(search_date)
+
+    new_apod = APOD(
+        title=title,
+        date=date,
+        hdurl=hdurl,
+        explanation=explanation)
+    
+    db.session.add(new_apod)
+    db.session.commit()
+ 
+
 
 
 
