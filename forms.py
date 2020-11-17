@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, PasswordField, TextAreaField, SelectField, BooleanField
 from wtforms.validators import InputRequired, Email, Length, URL, NumberRange, Optional, DataRequired
-from wtforms.fields.html5 import DateField
+from wtforms.fields.html5 import DateField, URLField
 
 class RegisterForm(FlaskForm):
     """User registration form."""
@@ -26,6 +26,7 @@ class RegisterForm(FlaskForm):
         "Last Name",
         validators=[InputRequired(), Length(max=30)],
     )
+    img_url = URLField('Profile Image URL(optional)', validators =[Optional()])
 
 class LoginForm(FlaskForm):
     """User login form"""

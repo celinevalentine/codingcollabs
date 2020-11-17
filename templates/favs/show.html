@@ -1,0 +1,48 @@
+ 
+{% extends 'base.html' %}
+
+{% block title %}Favorites{% endblock %}
+
+{% block content %} 
+
+<h1 class="display-2 my-3 text-center">Favorites</h1>
+<hr>
+
+{% if g.user.recipes %}
+
+
+<div class="d-flex flex-wrap justify-content-around" id="recipe-container">
+
+  {% for recipe in g.user.recipes %}
+
+
+  <div class="card border mb-4 mx-auto p-2 rounded text-center">
+    <a href="{{ url_for('show_recipe_details', id=recipe.id) }}" class="card-link">
+      <img src="{{recipe.image}}" class="card-img-top img-fluid" alt="Photo of {{recipe.title}}">
+
+      <div class="card-body py-2">
+        <h5 class="card-title d-inline">{{ recipe.title }}</h5>
+
+          <form id="favorite-form" class="favorite-form d-inline">
+            {% if recipe.id in recipe_list %}
+            <button data-id="{{ recipe.id }}" class='btn btn-sm'><span><i  class="fas fa-heart"></i></span></button>
+            {% else %}
+            <button data-id="{{ recipe.id }}" class='btn btn-sm'><span><i class="far fa-heart"></i></span></button>
+            {% endif %}
+          </form>
+          
+        <p class="lead mb-0">Ready In: {{ recipe.readyInMinutes }} minutes</p>
+        <p class="lead">Servings: {{ recipe.servings }}</p>
+        <br>
+      </div>
+    </a>
+  </div>
+
+{% endfor %}
+
+{% else %}
+<p class="mx-auto my-5 text-center">You don't have any saved recipes yet!</p>
+{% endif %}
+
+{% endblock %}
+

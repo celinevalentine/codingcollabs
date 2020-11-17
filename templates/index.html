@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}home{% endblock %}
+
+{% block content %}
+
+<div class="jumbotron jumbotron-fluid text-center text-success bg-light rounded py-4">
+  <div class="container">
+    <h1 class="display-4">Welcome to <span class="brandname">The Green Chef</span> </h1>
+    {% if not g.user %}
+    <p class="lead">Are you a vegan or vegetarian who loves cooking? You've come to the right place! Here you can:
+      <ul class="welcome-list">
+        <li><b>Search from over 300,000 recipes with visualized ingredients, taste and nutrition</b></li>
+        <li><b>Save your favorite recipes,create your own recipe cards to share with others</b></li>
+  {% else %}
+  <form data-id="{{ g.user.username }}" class="form-inline my-2 justify-content-center flex-nowrap mx-lg-auto"
+  id="search-form" action="/">
+  
+  <div class="input-group">
+    <input type="text" class="form-control" placeholder="Search" name="search">
+    <div class="input-group-append">
+      <button class="btn btn-secondary" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </div>
+  
+</form>
+  {% endif %}
+  </div>
+</div>
+<!-- Show search results -->
+{% for recipe in g.user.recipes %}
+<div class="container">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4">
+    <div class="card border mb-4 mx-auto p-2 rounded text-center">
+      <a href="{{url_for('show_recipe_details',id=recipe.id) }}"class="card-link">
+        <img src=" https://spoonacular.com/recipeImages/{{recipe.id}}-556x370.jpg" class="card-img-top img-fluid" alt="photo for {{recipe.title}}">
+        <div class="card-body py-2">
+          <h5 class="card-title d-inline"> {{recipe.title}}</h5>
+          <button data-id={{recipe.id}} class="btn btn-sm"><span><i class=" fas fa-heart"></i></span></button>
+          <p class="lead mb-0">Ready in:{{recipe.readyInMinutes}} mins</p>
+          <p class="lead">Servings: {{recipe.servings}}</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+{% endfor %}
+
+
+{% endblock %}

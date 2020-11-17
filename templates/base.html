@@ -1,6 +1,4 @@
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,43 +16,66 @@
 
 </head>
 
+  <body class="bg-success">
+  
+    <nav class="navbar navbar-expand navbar-light mb-4" style="background-color: #e3f2fd">
+      <div class="container-fluid">
+        <div class="navbar-header">
+        <a href="/" class="navbar-brand">
+            <img src="/static/images/logo.png" alt="logo" width="30" height="30" alt="" loading="lazy"><span>The Green Chef</span>
+        </a>
+      </div>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          {% if g.user %}
+          <li class="nav-item active">
+            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/favorites">Favorites</a>
+          </li>
+        </ul>
+      </div>
 
-  <body class="{% block body_class %}{% endblock %}">
-    <nav class="navbar navbar-light bg-light navbar-right">
-      <a class="nav-link" class="navbar-brand" href="/">NASA Deep Learners</a>
-   {% if g.user %}
-   
-    <a href="/users/{{g.user.username}}">{{g.user.username}}</a>
-      <a class="nav-link" href="/favorites">My Favorite Pictures</a>
-     
-      <a class="nav-link" href="/logout">Log out</a>
-      {% else %}
-      <a class="nav-link" href="/register">Sign up</a>
-      <a class="nav-link" href="/login">Log in</a>
-      {% endif %} 
+        <ul class="navbar-nav nav navbar-right">
+          <li class="nav-item text-light"><a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+          
+        </ul>
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user-plus"></i> Sign up</a></li>
+                <li class="nav-item"><a class="nav-link" href="/login"><i class="fas fa-user"></i> Log in</a></li>
+      </div>
+      {% endif %}
+
+    
     </nav> 
-           
-    <div class="container">
-      {% for category, message in get_flashed_messages(with_categories=True) %}
-      <div class="alert alert-{{ category }}">{{ message }}</div>
-      {% endfor %}
       
+              
+    <main class="container-fluid">
       {% block content %}
       {% endblock %}
-    
+
+    {% if get_flashed_messages() %}
+    {% for category, message in get_flashed_messages(with_categories=True) %}
+    <div id="flash" class="container mt-4">
+      <div class="alert alert-{{category}} text-center rounded w-25 mx-auto" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        {{message}}
+      </div>
     </div>
+    {% endfor %}
+    {% endif %}
+      
+    </main>
 
-<!-- <footer class="footer">
- 
-  <div class="footer-copyright text-center py-3">Copyright © 2020 CodingCollabs All rights reserved.
-  </div>
- 
-
-</footer> -->
-
- 
-</body>
-<script src="https://unpkg.com/axios/dist/axios.js"></script>   
+ <script src="https://unpkg.com/axios/dist/axios.js"></script>
+ <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+ integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>  
 <script src="/static/app.js"></script>
+</body>
+<footer class="bg-light my-0 py-1 d-flex justify-content-center align-items-center">
+  <p class="small text-center text-dark my-2 mr-3">&copy; The Green Chef 2020</p>
 </html>
 

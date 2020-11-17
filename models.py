@@ -22,8 +22,9 @@ class User(db.Model):
     email = db.Column(db.String(50), nullable=False)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
+    img_url = db.Column(db.String, default='/static/images/profile.png')
 
-    apods = db.relationship('APOD', secondary = "users_apods", backref='users')
+    recipes = db.relationship('Recipe', secondary = "users_recipes", backref='users')
 
     @property
     def full_name(self):
@@ -59,21 +60,135 @@ class User(db.Model):
         else:
             return False
     
-class UserApod(db.Model):
-    """Many to Many relationship between User and Launch"""
+    @classmethod
+    def default_image(cls):
+        return './static/images/profile.png'
 
-    __tablename__ = "users_apods"
+    def serialize(self):
+        """ Serialize User instance for JSON """
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'img_url': self.img_url,
+            'is_admin': self.is_admin
+        }
 
-    id = db.Column(db.Integer, db.ForeignKey('apods.id', ondelete='CASCADE'), primary_key=True)
+    def __repr__(self):
+        return f'<User: {self.username}>'
+
+class UserRecipe(db.Model):
+    """Many to Many relationship between User and Recipe"""
+
+    __tablename__ = "users_recipes"
+
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id', ondelete='CASCADE'), primary_key=True)
     username = db.Column(db.String, db.ForeignKey('users.username',ondelete='CASCADE'), primary_key=True)
 
-class APOD(db.Model):
-    """APOD Model"""
+class Recipe(db.Model):
+    """Recipe Model"""
     
-    __tablename__ = "apods"
+    __tablename__ = "recipes"
 
-    id = db.Column(db.Integer,primary_key=True)
-    title = db.Column(db.String)
-    date = db.Column(db.DateTime)
-    hdurl = db.Column(db.String)
-    explanation = db.Column(db.String)
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String, nullable=False)
+    image = db.Column(db.String, nullable=False)
+    sourceName = db.Column(db.String)
+    sourceUrl = db.Column(db.String)
+    readyInMinutes = db.Column(db.Integer)
+    servings = db.Column(db.Integer)
+    instructions = db.Column(db.String)
+    vegetarian = db.Column(db.Boolean, default=False)
+    vegan = db.Column(db.Boolean, default=False)
+    glutenFree = db.Column(db.Boolean, default=False)
+    dairyFree = db.Column(db.Boolean, default=False)
+    sustainable = db.Column(db.Boolean, default=False)
+    ketogenic = db.Column(db.Boolean, default=False)
+    whole30 = db.Column(db.Boolean, default=False)
+
+    ingredients = db.relationship(
+        "Ingredient", secondary="measurements", backref="recipes")
+    steps = db.relationship("Step", backref='recipe')
+
+    def __repr__(self):
+        return f'<Recipe: {self.title}>'
+
+    def serialize(self):
+        """ Serialize Recipe instance for JSON """
+        return {
+            'id': self.id,
+            'title': self.title,
+            'img_url': self.image,
+            'source_name': self.sourceName,
+            'source_url': self.sourceUrl,
+            'ready_in': self.readyInMinutes,
+            'servings': self.servings,
+            'instructions': self.instructions,
+            'ingredients': [ingredient.serialize() for ingredient in self.ingredients],
+            'steps': [step.serialize() for step in self.steps]
+        }
+    
+    class Measurement(db.Model):
+        """ Many to Many Recipes to Ingredients """
+        __tablename__ = "measurements"
+
+        id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+        ingredient_id = db.Column(db.Integer, db.ForeignKey(
+            'ingredients.id'))
+        recipe_id = db.Column(db.Integer, db.ForeignKey(
+            'recipes.id'))
+        amount = db.Column(db.Float)
+        unit = db.Column(db.String)
+
+        recipe = db.relationship('Recipe', backref='measurements')
+        ingredient = db.relationship("Ingredient", backref='measurements')
+
+        def show_measurement(self):
+            """ Returns a string with the full measurement """
+            return f"{int(self.amount)} {self.unit} {self.ingredient.name}"
+
+    class Ingredient(db.Model):
+        """ Ingredient Model """
+        __tablename__ = 'ingredients'
+
+        id = db.Column(db.Integer, primary_key=True)
+        name = db.Column(db.String, nullable=False, unique=True)
+        original = db.Column(db.String)
+
+        def __repr__(self):
+            return f'<Ingredient: {self.name}>'
+
+        def serialize(self):
+            """ Serialize Ingredient instance for JSON """
+            return {
+            'id': self.id,
+            'name': self.name,
+            'original': self.original
+        }
+
+    class Step(db.Model):
+        """ Step Model """
+
+        __tablename__ = 'steps'
+
+        id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+        recipe_id = db.Column(db.Integer, db.ForeignKey(
+            'recipes.id'))
+        number = db.Column(db.Integer)
+        step = db.Column(db.String)
+
+        def __repr__(self):
+            return f'<Step: {self.number} - {self.step}>'
+
+        def show_step(self):
+            """ returns a string of the step number and instructions """
+            return f"{self.number}. {self.step}"
+
+        def serialize(self):
+            """ Serialize Ingredient instance for JSON """
+            return {
+                'id': self.id,
+                'recipe_id': self.recipe_id,
+                'number': self.number,
+                'step': self.step
+            }
