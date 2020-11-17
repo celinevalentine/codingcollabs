@@ -1,4 +1,4 @@
-from models import User, Project, UserProject,Tasklist, Task, db
+from models import User
 from app import app
 
 # create all tables
@@ -9,9 +9,7 @@ db.create_all()
 # drop all tables
 
 User.query.delete()
-Project.query.delete()
-Tasklist.query.delete()
-Task.query.delete()
+
 
 # create User
 
@@ -30,23 +28,4 @@ nancyv = User.register(nancyv_data)
 
 db.session.add_all(u1,nancyv)
 db.session.commit()
-
-# p1 = Project(name="memory game", technology="html", about="making a 4x4 grid with pictures in it", level="easy", link="http://github.com")
-
-# db.session.add(p1)
-# db.session.commit()
-
-# add Project
-
-# up1 = UserProject(project_id=1, username="johnv")
-# db.session.add(up1)
-# db.session.commit()
-
-# t1 = Task(title="make html", notes="html marker", status="done", project_id=p1.id)
-
-# db.session.add(t1)
-# db.session.commit()
-
-
-
 
