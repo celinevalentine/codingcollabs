@@ -192,3 +192,23 @@ class Recipe(db.Model):
                 'number': self.number,
                 'step': self.step
             }
+    class Note(db.Model):
+        """Note Model"""
+        id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+        recipe_id = db.Column(db.Integer, db.ForeignKey(
+            'recipes.id'))
+        content = db.Column(db.String)
+       
+
+        def show_notes(self):
+            """ returns a string of the notes of a recipe """
+            return f"{self.number}. {self.content}"
+
+        def serialize(self):
+            """ Serialize Ingredient instance for JSON """
+            return {
+                'id': self.id,
+                'recipe_id': self.recipe_id,
+                'content': self.content
+            
+            }

@@ -235,6 +235,7 @@ def remove_favorites():
     return (response_json,200)
 
     
+# to-do: note routes for add/edit/delete route, render to recipes/detail.html
 
 
         
