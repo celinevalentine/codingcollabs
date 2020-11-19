@@ -14,39 +14,19 @@
         <li><b>Save your favorite recipes,create your own recipe cards to share with others</b></li>
   {% else %}
   <form data-id="{{ g.user.username }}" class="form-inline my-2 justify-content-center flex-nowrap mx-lg-auto"
-  id="search-form" action="/">
+  id="search-form" action="/recipes">
   
   <div class="input-group">
-    <input type="text" class="form-control" placeholder="Search" name="search">
+    <input type="text" class="form-control" placeholder="Search" name="query">
     <div class="input-group-append">
       <button class="btn btn-secondary" type="submit">
         <i class="fa fa-search"></i>
-      </button>
+      </button> 
     </div>
   
 </form>
   {% endif %}
   </div>
 </div>
-<!-- Show search results -->
-{% for recipe in g.user.recipes %}
-<div class="container">
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4">
-    <div class="card border mb-4 mx-auto p-2 rounded text-center">
-      <a href="{{url_for('show_recipe_details',id=recipe.id) }}"class="card-link">
-        <img src=" https://spoonacular.com/recipeImages/{{recipe.id}}-556x370.jpg" class="card-img-top img-fluid" alt="photo for {{recipe.title}}">
-        <div class="card-body py-2">
-          <h5 class="card-title d-inline"> {{recipe.title}}</h5>
-          <button data-id={{recipe.id}} class="btn btn-sm"><span><i class=" fas fa-heart"></i></span></button>
-          <p class="lead mb-0">Ready in:{{recipe.readyInMinutes}} mins</p>
-          <p class="lead">Servings: {{recipe.servings}}</p>
-        </div>
-      </a>
-    </div>
-  </div>
-</div>
-
-{% endfor %}
-
 
 {% endblock %}

@@ -5,7 +5,7 @@ from forms import RegisterForm, LoginForm, UserEditForm
 from werkzeug.exceptions import Unauthorized
 from sqlalchemy.exc import IntegrityError
 import os, requests
-from helper import search_recipes, get_recipe, add_recipe_db, valid_cuisines,valid_diets, get_visual_ingredients
+from helper import search_recipes, get_recipe
 from secrets import API_Key
 
 CURR_USER_KEY = "curr_user"
@@ -104,7 +104,9 @@ def logout():
 @app.route('/')
 def home_page():
     """show landing page for register or sign in"""
-    
+    if not g.user:
+        flash("Please login to view.", "warning")
+        return redirect('/login')
     return render_template('index.html')
 
 @app.route("/users/<username>")
@@ -160,21 +162,20 @@ def remove_user(username):
 ##############################################################################
 # Routes:
 
-@app.route("/")
-def show_homepage():
-    """show the homepage with the search form"""
+# Recipe routes:
+@app.route("/recipes")
+def show_recipe_results():
+    """show recipe search results"""
     if not g.user:
-        flash("Please login to view.", "warning")
+        flash("Please login to view.","warning")
         return redirect('/login')
-    print("XXXXX")
+
     data = search_recipes(request)
-    print("???????")
     recipes = data['results']
     print(recipes)
+    
+    return render_template('recipes/show.html',recipes=recipes)
 
-    return render_template("index.html", recipes=recipes)
-
-# Recipe routes:
 @app.route("/recipes/<int:id>")
 def show_recipe_details(id):
     """show the recipe details"""
@@ -183,8 +184,7 @@ def show_recipe_details(id):
         return redirect('/login')
 
     recipe = Recipe.query.filter_by(id=id).first()
-    data = get_recipe(id).json()
-    recipe = add_recipe_db(data)
+    data = get_recipe(id)
     
     return render_template("recipes/detail.html", recipe=recipe)
 
@@ -210,14 +210,12 @@ def add_favorites():
     recipe = Recipe.query.filter_by(id=id).first()
     if not recipe:
         data = get_recipe(id)
-        recipe = add_recipe_db(data)
         g.user.recipes.append(recipe)
         db.session.commit()
     else:
         g.user.recipes.append(recipe)
         db.session.commit()
     
-    response_json = jsonify(recipe = recipe.serialize(),message="Recipe added!")
     return (response_json,200)
         
 @app.route('/favorites/<int:id>', methods=['DELETE'])
