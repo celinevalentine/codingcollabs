@@ -183,8 +183,9 @@ def show_recipe_details(id):
         flash("Please login to view.","warning")
         return redirect('/login')
 
-    recipe = Recipe.query.filter_by(id=id).first()
-    data = get_recipe(id)
+    
+    recipe = get_recipe(id)
+    print(recipe['instructions'])
     
     return render_template("recipes/detail.html", recipe=recipe)
 

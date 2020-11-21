@@ -34,9 +34,10 @@ def search_recipes(request):
     cuisine = request.args.get("cuisine","")
     diet = request.args.get("diet","")
     offset = int(request.args.get("offset",0))
+    number=10
 
     url = f"{BASE_URL}/recipes/search"
-    querystring = generate_search_params()
+    querystring = generate_search_params(query,cuisine,diet,offset,number)
     headers = generate_headers()
 
     response = requests.request("GET", url, headers=headers, params=querystring)
