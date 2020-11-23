@@ -2,4 +2,3 @@ venv/
 __pycache__
 .vscode
 secrets.py
-credentials.json
