@@ -13,19 +13,8 @@ User.query.delete()
 
 # create User
 
-u1 = User(username="john", password="password", email="jv@gmail.com", first_name="john", last_name="v", bio='software engineer student', location='Miami,FL',profile_image_url='User.profile_image_url.default.arg')
+u1 = User(username="john", password="password", email="jv@gmail.com", first_name="john", last_name="v", img_url='/static/images/profile.png')
 
-nancyv_data = {
-    'username': 'nancyv',
-    'password': 'vnancy',
-    'first_name': 'nancy',
-    'last_name':'val',
-    'email': 'nv@test.com'
-    
-}
-
-nancyv = User.register(nancyv_data)
-
-db.session.add_all(u1,nancyv)
+db.session.add_all(u1)
 db.session.commit()
 

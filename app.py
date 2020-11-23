@@ -196,9 +196,13 @@ def show_fav_recipes():
     if not g.user:
         flash("Please login to view.","warning")
         return redirect('/login')
-    recipe_list = [recipe.id for recipe in g.user.recipes]
+    
+    data = search_recipes(request) 
+    favorite_list = [l.id for l in g.user.recipes]
+    favorites = [f['id'] for f in data['results'] if f['id'] in favorite_list]
+    
 
-    return render_template("favs/show.html", recipe_list=recipe_list)
+    return render_template("favs/show.html", favorites=favorites)
 
 
 @app.route("/favorites/<int:id>", methods=['POST'])
@@ -207,7 +211,7 @@ def add_favorites():
     if not g.user:
         flash("Please login to view.","warning")
         return redirect('/login')
-    
+   
     recipe = Recipe.query.filter_by(id=id).first()
     if not recipe:
         data = get_recipe(id)
@@ -217,7 +221,10 @@ def add_favorites():
         g.user.recipes.append(recipe)
         db.session.commit()
     
-    return (response_json,200)
+    json_data = jsonify(
+        recipe=recipe.serialize(),emssage="Favorite Recipe Saved!"
+    )
+    return (json_data,200)
         
 @app.route('/favorites/<int:id>', methods=['DELETE'])
 def remove_favorites():
@@ -229,7 +236,7 @@ def remove_favorites():
     UserRecipe.query.filter(UserRecipe.username == g.user.username, UserRecipe.recipe_id == recipe.id).delete()
     
     db.session.commit()
-    response_json = jsonify(recipe=recipe.serialize(),message="Recipe removed!")
+    response_json = jsonify(recipe=recipe.serialize(),message="Recipe removed from favorites!")
 
     return (response_json,200)
 

@@ -109,12 +109,32 @@ class Recipe(db.Model):
         "Ingredient", secondary="measurements", backref="recipes")
     steps = db.relationship("Step", backref='recipe')
 
+    def __repr__(self):
+        return f'<Recipe: {self.title}>'
+
+    def serialize(self):
+        """ Serialize Recipe instance for JSON """
+        return {
+            'id': self.id,
+            'title': self.title,
+            'img_url': self.image,
+            'source_name': self.sourceName,
+            'source_url': self.sourceUrl,
+            'ready_in': self.readyInMinutes,
+            'servings': self.servings,
+            'instructions': self.instructions,
+            'ingredients': [ingredient.serialize() for ingredient in self.ingredients],
+            'steps': [step.serialize() for step in self.steps]
+        }
+
     
     class Measurement(db.Model):
         """ Many to Many Recipes to Ingredients """
         __tablename__ = "measurements"
 
         id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+        recipe_id = db.Column(db.Integer, db.ForeignKey(
+        'recipes.id'))
         ingredient_id = db.Column(db.Integer, db.ForeignKey(
             'ingredients.id'))
         recipe_id = db.Column(db.Integer, db.ForeignKey(
@@ -137,6 +157,17 @@ class Recipe(db.Model):
         name = db.Column(db.String, nullable=False, unique=True)
         original = db.Column(db.String)
 
+        def __repr__(self):
+            return f'<Ingredient: {self.name}>'
+
+    def serialize(self):
+        """ Serialize Ingredient instance for JSON """
+        return {
+            'id': self.id,
+            'name': self.name,
+            'original': self.original
+        }
+
     
     class Step(db.Model):
         """ Step Model """
@@ -148,8 +179,18 @@ class Recipe(db.Model):
             'recipes.id'))
         number = db.Column(db.Integer)
         step = db.Column(db.String)
-
+        def __repr__(self):
+            return f'<Step: {self.number} - {self.step}>'
+        
         def show_step(self):
             """ returns a string of the step number and instructions """
             return f"{self.number}. {self.step}"
+        def serialize(self):
+            """ Serialize Ingredient instance for JSON """
+            return {
+            'id': self.id,
+            'recipe_id': self.recipe_id,
+            'number': self.number,
+            'step': self.step
+        }
    

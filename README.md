@@ -23,14 +23,22 @@ Project link</a>
 
 1. Clone the repo
 ```sh
-git clone https://github.com/github_username/repo_name.git
+git clone https://github.com/celinevalentine/thegreenchef
 ```
-2. Install NPM packages
+2. Install pip packages
 ```
 pip install -r requirements.txt
+
+3. Set up virtual environment
 ```
-
-
+python3 -m venv venv
+source venv/bin/activate
+```
+```
+4. Run seed.py
+```
+python3 seed.py
+```
 
 
 ### Userflow
@@ -54,7 +62,7 @@ The app uses <a href="https://spoonacular.com/food-api">Spoontacular API</a> for
 <!-- CONTACT -->
 ## Contact
 
-Celine Valentine - [@twitter_handle](https://twitter.com/twitter_coder_en_pointe) - cyv419@gmail.com
+Celine Valentine - [@celineval3](https://twitter.com/celineval3) - cyv419@gmail.com
 
 Source Code Link: [https://github.com/celinevalentine/thegreenchef]()
 
