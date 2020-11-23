@@ -11,10 +11,12 @@ from secrets import API_Key
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL','postgresql:///recipes')
-# app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY','izURL73j^nu24Bp')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///recipes'
-app.config['SECRET_KEY'] = 'SECRET'
+# used for production
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL','postgresql:///recipes')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY','izURL73j^nu24Bp')
+# used for development
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///recipes'
+# app.config['SECRET_KEY'] = 'SECRET'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
