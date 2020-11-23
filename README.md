@@ -26,17 +26,18 @@ Project link</a>
 git clone https://github.com/celinevalentine/thegreenchef
 ```
 2. Install pip packages
-```
+```sh
 pip install -r requirements.txt
+```
 
 3. Set up virtual environment
-```
+
+```sh
 python3 -m venv venv
 source venv/bin/activate
 ```
-```
 4. Run seed.py
-```
+```sh
 python3 seed.py
 ```
 
