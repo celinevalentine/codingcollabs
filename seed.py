@@ -1,4 +1,4 @@
-from models import db
+from models import db, User
 from app import app
 
 # create all tables
