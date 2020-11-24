@@ -1,5 +1,6 @@
 from models import db, User, Recipe
 import requests
+API_Key = os.environ.get('API_Key',None)
 
 
 BASE_URL = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com"
