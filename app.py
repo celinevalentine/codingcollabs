@@ -5,6 +5,7 @@ from forms import RegisterForm, LoginForm, UserEditForm
 from werkzeug.exceptions import Unauthorized
 from sqlalchemy.exc import IntegrityError
 import os, requests
+from .env import API_Key
 from helper import search_recipes, get_recipe
 API_Key = os.environ.get('API_Key',None)
 CURR_USER_KEY = "curr_user"
