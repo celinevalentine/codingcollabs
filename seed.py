@@ -6,11 +6,6 @@ from app import app
 db.drop_all()
 db.create_all()
 
-# drop all tables
-
-User.query.delete()
-
-
 # create User
 
 u1 = User(username="john", password="password", email="jv@gmail.com", first_name="john", last_name="v", img_url='/static/images/profile.png')
