@@ -6,14 +6,14 @@ from werkzeug.exceptions import Unauthorized
 from sqlalchemy.exc import IntegrityError
 import os, requests
 from helper import search_recipes, get_recipe
-from secrets import API_Key
-
+API_Key = os.environ.get('API_Key',None)
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 # used for production
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL','postgresql:///recipes')
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY','izURL73j^nu24Bp')
+
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY','secret')
 # used for development
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///recipes'
 # app.config['SECRET_KEY'] = 'SECRET'
