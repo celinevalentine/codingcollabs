@@ -1,5 +1,5 @@
 from models import db, User, Recipe
-import requests
+import os, requests
 API_Key = os.environ.get('API_Key',None)
 
 
