@@ -63,7 +63,7 @@ The app uses <a href="https://spoonacular.com/food-api">Spoontacular API</a> for
 <!-- CONTACT -->
 ## Contact
 
-Celine Valentine - [@celineval3](https://twitter.com/celineval3) - cyv419@gmail.com
+Celine Valentine - topdocyang@gmail.com
 
 Source Code Link: [https://github.com/celinevalentine/thegreenchef]()
 
